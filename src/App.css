@@ -1,0 +1,179 @@
+.app {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* === СТАРТОВЫЙ ЭКРАН === */
+.start-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, var(--bg-mid) 0%, var(--bg-deep) 70%);
+}
+
+/* Сетка на фоне */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 70%);
+}
+
+/* Свечения */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: float 8s ease-in-out infinite;
+}
+.glow-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-cyan);
+  top: -100px;
+  left: -100px;
+}
+.glow-2 {
+  width: 350px;
+  height: 350px;
+  background: #7b2fff;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: -4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 30px); }
+}
+
+/* Контент */
+.start-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 40px;
+}
+
+.badge {
+  font-size: 72px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 30px var(--accent-cyan));
+}
+
+.title {
+  font-size: 64px;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+.title .accent {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+}
+
+.subtitle {
+  font-size: 20px;
+  color: var(--text-soft);
+  margin-bottom: 40px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-cyan), #0090ff);
+  color: var(--bg-deep);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px 48px;
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
+  transition: box-shadow 0.3s;
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 40px rgba(0, 212, 255, 0.7);
+}
+
+.hint {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-soft);
+  opacity: 0.6;
+}
+
+/* Заглушка для будущих экранов */
+.placeholder {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  text-align: center;
+}
+.placeholder button {
+  background: var(--bg-light);
+  color: var(--text-white);
+  padding: 12px 24px;
+  border-radius: 12px;
+}
+
+/* Адаптив под телефоны */
+@media (max-width: 600px) {
+  .title { font-size: 40px; }
+  .subtitle { font-size: 16px; }
+  .badge { font-size: 56px; }
+}
+
+/* Кнопка "Назад" поверх диалога */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(20, 43, 71, 0.9);
+  color: var(--text-white);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  z-index: 200;
+  transition: all 0.3s;
+}
+.back-btn:hover {
+  background: var(--accent-cyan);
+  color: var(--bg-deep);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 40px;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s;
+}
+.btn-secondary:hover {
+  color: var(--text-white);
+  border-color: var(--text-soft);
+}
+
+.placeholder button {
+  background: var(--bg-light);
+  color: var(--text-white);
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+.placeholder button:hover {
+  background: var(--accent-cyan);
+  color: var(--bg-deep);
+}

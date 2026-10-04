@@ -1,0 +1,111 @@
+.privacy-game {
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.privacy-header h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.privacy-header p {
+  color: var(--text-soft);
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.privacy-progress {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--text-soft);
+  background: rgba(0, 212, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.privacy-card {
+  background: rgba(20, 43, 71, 0.75);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+.privacy-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: var(--text-white);
+}
+
+.privacy-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.privacy-option {
+  padding: 16px 20px;
+  background: rgba(0, 212, 255, 0.06);
+  border: 2px solid rgba(0, 212, 255, 0.2);
+  color: var(--text-white);
+  border-radius: 12px;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.privacy-option:hover:not(:disabled) {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: var(--accent-cyan);
+}
+.privacy-option:disabled {
+  cursor: default;
+}
+.privacy-option.chosen-safe {
+  border-color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.15);
+}
+.privacy-option.chosen-unsafe {
+  border-color: var(--accent-red);
+  background: rgba(255, 82, 82, 0.15);
+}
+.privacy-option.highlight-safe {
+  border-color: rgba(0, 230, 118, 0.4);
+}
+.privacy-mark {
+  font-size: 18px;
+}
+
+.privacy-feedback {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 14px;
+  border: 2px solid;
+}
+.privacy-feedback.correct {
+  border-color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.08);
+}
+.privacy-feedback.wrong {
+  border-color: var(--accent-red);
+  background: rgba(255, 82, 82, 0.08);
+}
+.privacy-feedback p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-soft);
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .privacy-header h2 { font-size: 20px; }
+  .privacy-card { padding: 20px; }
+  .privacy-card h3 { font-size: 17px; }
+  .privacy-option { font-size: 14px; padding: 14px 16px; }
+}

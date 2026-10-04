@@ -1,0 +1,94 @@
+.dialogue-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 25, 41, 0.3) 0%, rgba(10, 25, 41, 0.95) 70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Аватар */
+.dialogue-avatar {
+  position: absolute;
+  bottom: 220px;
+  height: 50vh;
+  max-height: 500px;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 40px rgba(0, 212, 255, 0.3));
+}
+.avatar-left {
+  left: 5%;
+}
+.avatar-right {
+  right: 5%;
+  filter: drop-shadow(0 10px 40px rgba(255, 184, 0, 0.3));
+}
+.dialogue-avatar img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Окно диалога */
+.dialogue-box {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(20, 43, 71, 0.95);
+  border: 2px solid var(--accent-cyan);
+  border-radius: 20px;
+  padding: 24px 32px;
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+}
+
+.dialogue-speaker {
+  font-family: var(--font-title);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dialogue-text {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--text-white);
+  min-height: 60px;
+}
+
+.cursor {
+  color: var(--accent-cyan);
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.dialogue-hint {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-soft);
+  opacity: 0.7;
+  text-align: right;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .dialogue-avatar {
+    height: 35vh;
+    bottom: 240px;
+  }
+  .avatar-left { left: 0; }
+  .avatar-right { right: 0; }
+  .dialogue-text { font-size: 16px; }
+  .dialogue-box { padding: 18px 22px; }
+}

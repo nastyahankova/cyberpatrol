@@ -1,0 +1,69 @@
+/* Импорт шрифтов */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap');
+
+:root {
+  /* Цвета */
+  --bg-deep: #0a1929;
+  --bg-mid: #142b47;
+  --bg-light: #1e3a5f;
+  --accent-cyan: #00d4ff;
+  --accent-yellow: #ffb800;
+  --accent-green: #00e676;
+  --accent-red: #ff5252;
+  --text-white: #ffffff;
+  --text-soft: #b8c5d6;
+
+  /* Шрифты */
+  --font-title: 'Montserrat', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-title);
+  font-weight: 800;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.dialogue-overlay,
+.dialogue-box,
+.dialogue-text,
+.dialogue-speaker,
+.start-screen,
+.start-content,
+.privacy-card,
+.posts-card,
+.fin-card,
+.phish-card,
+.social-chat,
+.social-option,
+.posts-option,
+.fin-btn,
+.posts-btn,
+.phish-btn,
+.social-option,
+.level-card {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
