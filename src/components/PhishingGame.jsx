@@ -41,6 +41,7 @@ export default function PhishingGame({ onComplete }) {
       setAnswer(null);
     } else {
       setFinished(true);
+      onComplete({ correct: score, total: total });
     }
   };
 
@@ -75,7 +76,7 @@ export default function PhishingGame({ onComplete }) {
             {score} из {total} правильных
           </div>
           <p className="phish-result-message">{message}</p>
-          <button className="btn-primary" onClick={onComplete}>
+          <button className="btn-primary" onClick={() => onComplete({ correct: score, total: total })}>
             Продолжить →
           </button>
         </motion.div>

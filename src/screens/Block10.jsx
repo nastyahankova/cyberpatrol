@@ -47,6 +47,7 @@ const outroScript = [
 export default function Block10({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
+  const [gameResult, setGameResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
@@ -72,7 +73,13 @@ export default function Block10({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <ReputationGame onComplete={() => { setIndex(0); setPhase('outro'); }} />
+        <ReputationGame
+          onComplete={(result) => {
+            setGameResult(result);
+            setIndex(0);
+            setPhase('outro');
+          }}
+        />
         <button className="back-btn" onClick={onBack}>← К карте</button>
       </>
     );
@@ -82,7 +89,7 @@ export default function Block10({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete();
+      else onComplete(gameResult);
     };
     return (
       <DialogueBox

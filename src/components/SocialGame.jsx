@@ -12,14 +12,12 @@ export default function SocialGame({ onComplete }) {
 
   const current = socialScript[step];
 
-  // Первое сообщение Артёма
   useEffect(() => {
     if (messages.length === 0 && current) {
       setMessages([{ from: 'them', text: current.text }]);
     }
   }, [current, messages.length]);
 
-  // Автоскролл вниз
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -27,14 +25,12 @@ export default function SocialGame({ onComplete }) {
   const handleChoice = (option) => {
     if (!option.correct) setMistakes((m) => m + 1);
 
-    // Добавляем ответ игрока и реакцию Артёма
     setMessages((prev) => [
       ...prev,
       { from: 'me', text: option.text },
       { from: 'them', text: option.reaction, comment: option.comment, correct: option.correct },
     ]);
 
-    // Ждём немного и переходим к следующему шагу
     setTimeout(() => {
       if (step < socialScript.length - 1) {
         const next = socialScript[step + 1];
@@ -46,7 +42,6 @@ export default function SocialGame({ onComplete }) {
     }, 1400);
   };
 
-  // --- Экран результата ---
   if (finished) {
     const total = socialScript.length;
     const correct = total - mistakes;
@@ -78,7 +73,10 @@ export default function SocialGame({ onComplete }) {
             {correct} из {total} безопасных решений
           </div>
           <p className="social-result-message">{message}</p>
-          <button className="btn-primary" onClick={onComplete}>
+          <button
+            className="btn-primary"
+            onClick={() => onComplete({ correct, total })}
+          >
             Продолжить →
           </button>
         </motion.div>
@@ -86,7 +84,6 @@ export default function SocialGame({ onComplete }) {
     );
   }
 
-  // --- Игровой экран ---
   return (
     <div className="social-game">
       <div className="social-header">

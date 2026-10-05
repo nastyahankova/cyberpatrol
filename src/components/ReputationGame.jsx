@@ -33,7 +33,7 @@ export default function ReputationGame({ onComplete }) {
       setAnswer(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      onComplete(correctCount);
+      onComplete({ correct: correctCount, total });
     }
   };
 

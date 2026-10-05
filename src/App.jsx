@@ -13,6 +13,8 @@ import Block9 from './screens/Block9';
 import Block10 from './screens/Block10';
 import Block11 from './screens/Block11';
 import LevelSelect from './screens/LevelSelect';
+import AboutProject from './screens/AboutProject';
+import Profile from './screens/Profile';
 import SoundToggle from './components/SoundToggle';
 import { useSound } from './contexts/SoundContext';
 import { loadProgress, markCompleted } from './utils/progress';
@@ -43,9 +45,9 @@ function App() {
     setScreen('placeholder');
   };
 
-  const completeBlock = (blockId) => {
+  const completeBlock = (blockId, result = null) => {
     playClick();
-    const updated = markCompleted(blockId);
+    const updated = markCompleted(blockId, result);
     setProgress(updated);
     setScreen('levels');
   };
@@ -58,7 +60,23 @@ function App() {
         <StartScreen
           onStart={() => setScreen('intro')}
           onContinue={() => setScreen('levels')}
+          onAbout={() => setScreen('about')}
+          onProfile={() => setScreen('profile')}
           hasProgress={hasProgress}
+        />
+      )}
+
+      {screen === 'about' && (
+        <AboutProject
+          onBack={() => setScreen('start')}
+          onLevels={() => setScreen('levels')}
+        />
+      )}
+
+      {screen === 'profile' && (
+        <Profile
+          onBack={() => setScreen('start')}
+          onLevels={() => setScreen('levels')}
         />
       )}
 
@@ -77,17 +95,17 @@ function App() {
         />
       )}
 
-      {screen === 'block1' && <Block1 onComplete={() => completeBlock('block1')} onBack={() => setScreen('levels')} />}
-      {screen === 'block2' && <Block2 onComplete={() => completeBlock('block2')} onBack={() => setScreen('levels')} />}
-      {screen === 'block3' && <Block3 onComplete={() => completeBlock('block3')} onBack={() => setScreen('levels')} />}
-      {screen === 'block4' && <Block4 onComplete={() => completeBlock('block4')} onBack={() => setScreen('levels')} />}
-      {screen === 'block5' && <Block5 onComplete={() => completeBlock('block5')} onBack={() => setScreen('levels')} />}
-      {screen === 'block6' && <Block6 onComplete={() => completeBlock('block6')} onBack={() => setScreen('levels')} />}
-      {screen === 'block7' && <Block7 onComplete={() => completeBlock('block7')} onBack={() => setScreen('levels')} />}
-      {screen === 'block8' && <Block8 onComplete={() => completeBlock('block8')} onBack={() => setScreen('levels')} />}
-      {screen === 'block9' && <Block9 onComplete={() => completeBlock('block9')} onBack={() => setScreen('levels')} />}
-      {screen === 'block10' && <Block10 onComplete={() => completeBlock('block10')} onBack={() => setScreen('levels')} />}
-      {screen === 'block11' && <Block11 onComplete={() => completeBlock('block11')} onBack={() => setScreen('levels')} />}
+      {screen === 'block1' && <Block1 onComplete={(r) => completeBlock('block1', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block2' && <Block2 onComplete={(r) => completeBlock('block2', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block3' && <Block3 onComplete={(r) => completeBlock('block3', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block4' && <Block4 onComplete={(r) => completeBlock('block4', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block5' && <Block5 onComplete={(r) => completeBlock('block5', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block6' && <Block6 onComplete={(r) => completeBlock('block6', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block7' && <Block7 onComplete={(r) => completeBlock('block7', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block8' && <Block8 onComplete={(r) => completeBlock('block8', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block9' && <Block9 onComplete={(r) => completeBlock('block9', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block10' && <Block10 onComplete={(r) => completeBlock('block10', r)} onBack={() => setScreen('levels')} />}
+      {screen === 'block11' && <Block11 onComplete={(r) => completeBlock('block11', r)} onBack={() => setScreen('levels')} />}
 
       {screen === 'placeholder' && (
         <div className="placeholder">
@@ -100,7 +118,7 @@ function App() {
   );
 }
 
-function StartScreen({ onStart, onContinue, hasProgress }) {
+function StartScreen({ onStart, onContinue, onAbout, onProfile, hasProgress }) {
   return (
     <motion.div
       className="start-screen"
@@ -152,6 +170,26 @@ function StartScreen({ onStart, onContinue, hasProgress }) {
         >
           {hasProgress ? 'Начать заново' : 'Начать миссию'}
         </motion.button>
+
+        <div className="start-secondary-buttons">
+          <motion.button
+            className="btn-about"
+            onClick={onProfile}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            📊 Профиль
+          </motion.button>
+
+          <motion.button
+            className="btn-about"
+            onClick={onAbout}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            ℹ️ О проекте
+          </motion.button>
+        </div>
 
         <p className="hint">
           {hasProgress ? 'Твой прогресс сохранён' : 'Нажми, чтобы войти в систему'}

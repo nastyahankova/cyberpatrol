@@ -23,7 +23,7 @@ export default function PrivacySettings({ onComplete }) {
       setIndex(index + 1);
       setAnswer(null);
     } else {
-      onComplete(safeCount);
+      onComplete({ correct: safeCount, total: total });
     }
   };
 

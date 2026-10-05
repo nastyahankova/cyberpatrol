@@ -37,7 +37,7 @@ function getRank(score, total) {
 export default function Block11({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
-  const [result, setResult] = useState(null); // { score, total, rank }
+  const [result, setResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
@@ -66,7 +66,8 @@ export default function Block11({ onComplete, onBack }) {
         <FinalBattle
           onComplete={(score) => {
             const total = 10;
-            setResult({ score, total, rank: getRank(score, total) });
+            const rank = getRank(score, total);
+            setResult({ score, total, rank });
             setPhase('result');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
@@ -117,7 +118,10 @@ export default function Block11({ onComplete, onBack }) {
 
           <Certificate score={score} total={total} rank={rank} />
 
-          <button className="btn-secondary b11-complete" onClick={onComplete}>
+          <button
+            className="btn-secondary b11-complete"
+            onClick={() => onComplete({ correct: score, total, rank })}
+          >
             Завершить миссию
           </button>
         </motion.div>

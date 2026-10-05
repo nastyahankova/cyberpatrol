@@ -10,14 +10,13 @@ export function SoundProvider({ children }) {
   const clickRef = useRef(null);
   const lastTypingTime = useRef(0);
 
-  // Инициализация аудио
   useEffect(() => {
     musicRef.current = new Audio('/sounds/background.mp3');
     musicRef.current.loop = true;
     musicRef.current.volume = 0.15;
 
     typingRef.current = new Audio('/sounds/typing.mp3');
-    typingRef.current.volume = 0.4;
+    typingRef.current.volume = 0.25;
 
     clickRef.current = new Audio('/sounds/click.mp3');
     clickRef.current.volume = 0.3;
@@ -29,7 +28,6 @@ export function SoundProvider({ children }) {
     };
   }, []);
 
-  // Запуск музыки при первом взаимодействии
   useEffect(() => {
     const startMusic = () => {
       if (musicOn && musicRef.current) {
@@ -46,7 +44,6 @@ export function SoundProvider({ children }) {
     };
   }, [musicOn]);
 
-  // Управление музыкой
   useEffect(() => {
     if (!musicRef.current) return;
     if (musicOn) {
@@ -56,21 +53,23 @@ export function SoundProvider({ children }) {
     }
   }, [musicOn]);
 
-  // Звук печати — с защитой от накопления
   const playTyping = () => {
     if (!sfxOn || !typingRef.current) return;
-
-    // Защита: не чаще, чем раз в 80 мс
     const now = Date.now();
     if (now - lastTypingTime.current < 80) return;
     lastTypingTime.current = now;
-
     try {
       typingRef.current.currentTime = 0;
       typingRef.current.play().catch(() => {});
-    } catch (e) {
-      // игнорируем ошибки
-    }
+    } catch (e) {}
+  };
+
+  const stopTyping = () => {
+    if (!typingRef.current) return;
+    try {
+      typingRef.current.pause();
+      typingRef.current.currentTime = 0;
+    } catch (e) {}
   };
 
   const playClick = () => {
@@ -89,6 +88,7 @@ export function SoundProvider({ children }) {
         toggleMusic: () => setMusicOn((v) => !v),
         toggleSfx: () => setSfxOn((v) => !v),
         playTyping,
+        stopTyping,
         playClick,
       }}
     >

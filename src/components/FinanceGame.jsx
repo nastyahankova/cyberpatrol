@@ -116,9 +116,15 @@ export default function FinanceGame({ onComplete }) {
             })}
           </div>
 
-          <button className="btn-primary" onClick={onComplete}>
-            Продолжить →
-          </button>
+          <button
+            className="btn-primary"
+            onClick={() => {
+              const correct = history.filter(h => h.wasRight).length;
+              onComplete({ correct, total: financialOffers.length });
+            }}
+>
+  Продолжить →
+</button>
         </motion.div>
       </div>
     );

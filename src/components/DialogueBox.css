@@ -11,20 +11,31 @@
   z-index: 100;
 }
 
-/* Аватар */
-.dialogue-avatar {
+/* Контейнер для персонажей — ограничивает ширину */
+.dialogue-avatars-container {
   position: absolute;
   bottom: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1100px;      /* ← вот главное ограничение */
   height: 50vh;
   max-height: 500px;
   pointer-events: none;
+}
+
+/* Персонаж */
+.dialogue-avatar {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
   filter: drop-shadow(0 10px 40px rgba(0, 212, 255, 0.3));
 }
 .avatar-left {
-  left: 5%;
+  left: 0;
 }
 .avatar-right {
-  right: 5%;
+  right: 0;
   filter: drop-shadow(0 10px 40px rgba(255, 184, 0, 0.3));
 }
 .dialogue-avatar img {
@@ -83,12 +94,11 @@
 
 /* Адаптив */
 @media (max-width: 768px) {
-  .dialogue-avatar {
-    height: 35vh;
+  .dialogue-avatars-container {
+    max-width: 100%;
+    height: 40vh;
     bottom: 240px;
   }
-  .avatar-left { left: 0; }
-  .avatar-right { right: 0; }
   .dialogue-text { font-size: 16px; }
   .dialogue-box { padding: 18px 22px; }
 }

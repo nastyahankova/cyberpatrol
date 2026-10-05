@@ -6,7 +6,7 @@ import './DialogueBox.css';
 export default function DialogueBox({ speaker, text, avatar, side, onNext, isLast }) {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  const { playTyping } = useSound();
+  const { playTyping, stopTyping } = useSound();
 
   useEffect(() => {
     setDisplayedText('');
@@ -15,35 +15,56 @@ export default function DialogueBox({ speaker, text, avatar, side, onNext, isLas
     const interval = setInterval(() => {
       if (i < text.length) {
         setDisplayedText(text.slice(0, i + 1));
-        playTyping(); // ← звук при каждой букве
+        playTyping();
         i++;
       } else {
         setIsTyping(false);
         clearInterval(interval);
+        stopTyping();
       }
     }, 25);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      stopTyping();
+    };
   }, [text]);
 
   const handleClick = () => {
     if (isTyping) {
       setDisplayedText(text);
       setIsTyping(false);
+      stopTyping();
     } else {
+      stopTyping();
       onNext();
     }
   };
 
   return (
     <div className="dialogue-overlay" onClick={handleClick}>
-      <motion.div
-        className={`dialogue-avatar avatar-${side}`}
-        initial={{ x: side === 'left' ? -100 : 100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 120, damping: 15 }}
-      >
-        <img src={avatar} alt={speaker} />
-      </motion.div>
+      {/* Контейнер для персонажей — держит их рядом */}
+      <div className="dialogue-avatars-container">
+        {side === 'left' && (
+          <motion.div
+            className="dialogue-avatar avatar-left"
+            initial={{ x: -60, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 120, damping: 15 }}
+          >
+            <img src={avatar} alt={speaker} />
+          </motion.div>
+        )}
+        {side === 'right' && (
+          <motion.div
+            className="dialogue-avatar avatar-right"
+            initial={{ x: 60, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 120, damping: 15 }}
+          >
+            <img src={avatar} alt={speaker} />
+          </motion.div>
+        )}
+      </div>
 
       <motion.div
         className="dialogue-box"

@@ -69,6 +69,8 @@ const outroScript = [
 export default function Block5({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
+  const [settingsResult, setSettingsResult] = useState(null);
+  const [postsResult, setPostsResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
@@ -94,7 +96,13 @@ export default function Block5({ onComplete, onBack }) {
   if (phase === 'settings') {
     return (
       <>
-        <PrivacySettings onComplete={() => { setIndex(0); setPhase('mid'); }} />
+        <PrivacySettings
+          onComplete={(result) => {
+            setSettingsResult(result);
+            setIndex(0);
+            setPhase('mid');
+          }}
+        />
         <button className="back-btn" onClick={onBack}>← К карте</button>
       </>
     );
@@ -121,7 +129,13 @@ export default function Block5({ onComplete, onBack }) {
   if (phase === 'posts') {
     return (
       <>
-        <PostsGame onComplete={() => { setIndex(0); setPhase('outro'); }} />
+        <PostsGame
+          onComplete={(result) => {
+            setPostsResult(result);
+            setIndex(0);
+            setPhase('outro');
+          }}
+        />
         <button className="back-btn" onClick={onBack}>← К карте</button>
       </>
     );
@@ -131,7 +145,11 @@ export default function Block5({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete();
+      else {
+        const correct = (settingsResult?.correct || 0) + (postsResult?.correct || 0);
+        const total = (settingsResult?.total || 0) + (postsResult?.total || 0);
+        onComplete({ correct, total });
+      }
     };
     return (
       <DialogueBox

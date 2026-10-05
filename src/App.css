@@ -177,3 +177,22 @@
   background: var(--accent-cyan);
   color: var(--bg-deep);
 }
+.btn-about {
+  display: block;
+  margin: 16px auto 0;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: 1px dashed rgba(0, 212, 255, 0.4);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-about:hover {
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.08);
+}

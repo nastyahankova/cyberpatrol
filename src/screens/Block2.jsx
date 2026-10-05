@@ -47,15 +47,13 @@ const outroScript = [
 export default function Block2({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
+  const [gameResult, setGameResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
     const handleNext = () => {
       if (index < introScript.length - 1) setIndex(index + 1);
-      else {
-        setIndex(0);
-        setPhase('game');
-      }
+      else { setIndex(0); setPhase('game'); }
     };
     return (
       <>
@@ -75,7 +73,13 @@ export default function Block2({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <PhishingGame onComplete={() => { setIndex(0); setPhase('outro'); }} />
+        <PhishingGame
+          onComplete={(result) => {
+            setGameResult(result);
+            setIndex(0);
+            setPhase('outro');
+          }}
+        />
         <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
@@ -85,7 +89,7 @@ export default function Block2({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete();
+      else onComplete(gameResult);
     };
     return (
       <>

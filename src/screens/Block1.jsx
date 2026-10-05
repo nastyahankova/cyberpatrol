@@ -88,7 +88,7 @@ export default function Block1({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete();
+      else onComplete({ correct: 1, total: 1 });
     };
     return (
       <>

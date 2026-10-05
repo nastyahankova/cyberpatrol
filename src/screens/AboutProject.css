@@ -1,0 +1,181 @@
+.about-screen {
+  min-height: 100vh;
+  padding: 60px 20px 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.about-bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.08), transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(123, 47, 255, 0.08), transparent 50%),
+    var(--bg-deep);
+  z-index: 0;
+}
+
+.about-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+.about-glow.glow-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-cyan);
+  top: -100px;
+  left: -100px;
+}
+.about-glow.glow-2 {
+  width: 350px;
+  height: 350px;
+  background: #7b2fff;
+  bottom: -100px;
+  right: -100px;
+}
+
+.about-content {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.about-badge {
+  font-size: 64px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 30px var(--accent-cyan));
+}
+
+.about-title {
+  font-size: 46px;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+.about-title .accent {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+.about-tagline {
+  font-size: 17px;
+  color: var(--text-soft);
+  margin-bottom: 40px;
+}
+
+/* Секции */
+.about-section {
+  text-align: left;
+  background: rgba(20, 43, 71, 0.5);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 16px;
+  padding: 26px 30px;
+  margin-bottom: 20px;
+}
+
+.about-section h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: var(--accent-cyan);
+}
+
+.about-section p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-soft);
+  margin-bottom: 12px;
+}
+.about-section p:last-child {
+  margin-bottom: 0;
+}
+
+.about-section b {
+  color: var(--text-white);
+}
+
+/* Блоки-темы */
+.about-blocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.about-block-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 212, 255, 0.06);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-white);
+}
+.about-block-icon {
+  font-size: 22px;
+}
+
+/* Технологии */
+.about-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px !important;
+}
+.about-tech span {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.about-note {
+  font-size: 14px !important;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Автор */
+.about-author p {
+  margin-bottom: 14px;
+}
+.about-year {
+  font-size: 14px !important;
+  color: var(--text-soft);
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+/* Кнопки */
+.about-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+  .about-screen { padding: 40px 14px 60px; }
+  .about-title { font-size: 30px; }
+  .about-tagline { font-size: 15px; margin-bottom: 26px; }
+  .about-badge { font-size: 48px; }
+  .about-section { padding: 20px; }
+  .about-section h2 { font-size: 18px; }
+  .about-section p { font-size: 15px; }
+  .about-blocks { grid-template-columns: 1fr; }
+  .about-actions { flex-direction: column; }
+  .about-actions button { width: 100%; }
+}

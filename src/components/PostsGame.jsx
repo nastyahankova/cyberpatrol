@@ -25,7 +25,7 @@ export default function PostsGame({ onComplete }) {
       setIndex(index + 1);
       setAnswer(null);
     } else {
-      onComplete(correctCount + (isLastCorrect() ? 1 : 0));
+      onComplete({ correct: correctCount + (isLastCorrect() ? 1 : 0), total });
     }
   };
 

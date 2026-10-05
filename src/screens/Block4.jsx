@@ -38,7 +38,7 @@ const outroScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Именно. Настоящие инвестиции — это долго и скучно, но надёжно. А теперь — новая миссия. Хакер не дремлет, и у него ещё много приёмов. Держись!',
+    text: 'Именно. Настоящие инвестиции — это долго и скучно, но надёжно. Двигаемся дальше!',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -47,15 +47,13 @@ const outroScript = [
 export default function Block4({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
+  const [gameResult, setGameResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
     const handleNext = () => {
       if (index < introScript.length - 1) setIndex(index + 1);
-      else {
-        setIndex(0);
-        setPhase('game');
-      }
+      else { setIndex(0); setPhase('game'); }
     };
     return (
       <>
@@ -75,7 +73,13 @@ export default function Block4({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <FinanceGame onComplete={() => { setIndex(0); setPhase('outro'); }} />
+        <FinanceGame
+          onComplete={(result) => {
+            setGameResult(result);
+            setIndex(0);
+            setPhase('outro');
+          }}
+        />
         <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
@@ -85,19 +89,17 @@ export default function Block4({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete();
+      else onComplete(gameResult);
     };
     return (
-      <>
-        <DialogueBox
-          speaker={current.speaker}
-          text={current.text}
-          avatar={current.avatar}
-          side={current.side}
-          onNext={handleNext}
-          isLast={index === outroScript.length - 1}
-        />
-      </>
+      <DialogueBox
+        speaker={current.speaker}
+        text={current.text}
+        avatar={current.avatar}
+        side={current.side}
+        onNext={handleNext}
+        isLast={index === outroScript.length - 1}
+      />
     );
   }
 }
