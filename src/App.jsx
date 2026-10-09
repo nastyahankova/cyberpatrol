@@ -17,7 +17,7 @@ import AboutProject from './screens/AboutProject';
 import Profile from './screens/Profile';
 import SoundToggle from './components/SoundToggle';
 import { useSound } from './contexts/SoundContext';
-import { loadProgress, markCompleted } from './utils/progress';
+import { loadProgress, markCompleted, resetProgress } from './utils/progress';
 import './screens/LevelSelect.css';
 import './App.css';
 
@@ -52,13 +52,19 @@ function App() {
     setScreen('levels');
   };
 
+  const startOver = () => {
+    resetProgress();
+    setProgress(loadProgress());
+    setScreen('intro');
+  };
+
   return (
     <div className="app">
       <SoundToggle />
 
       {screen === 'start' && (
         <StartScreen
-          onStart={() => setScreen('intro')}
+          onStart={startOver}
           onContinue={() => setScreen('levels')}
           onAbout={() => setScreen('about')}
           onProfile={() => setScreen('profile')}
