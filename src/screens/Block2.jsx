@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import PhishingGame from '../components/PhishingGame';
+import InspectEmail from '../components/InspectEmail';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Фишинг — это когда мошенник притворяется тем, кому ты доверяешь. Сейчас покажу несколько примеров. Твоя задача — отличить настоящие сообщения от поддельных.',
+    text: 'Фишинг — это когда мошенник притворяется тем, кому ты доверяешь. Сейчас увидишь письмо. Найди в нём подозрительные элементы.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -26,19 +26,19 @@ const introScript = [
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Ты научился распознавать фишинг. Запомни главное: не переходи по ссылкам из подозрительных сообщений и проверяй отправителя.',
+    text: 'Молодец! Ты научился замечать признаки фишинга. Запомни главное: проверяй адрес отправителя, не переходи по ссылкам и не поддавайся на срочность.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А если всё-таки перешёл?',
+    text: 'Понял. Мошенники давят на страх и срочность.',
     avatar: '/hero.png',
     side: 'left',
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Тогда сразу расскажи взрослым и поменяй пароли. Но лучше — не переходить. Готов к следующему испытанию?',
+    text: 'Именно. Готов к следующему испытанию? Там будет про общение с незнакомцами.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -73,7 +73,7 @@ export default function Block2({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <PhishingGame
+        <InspectEmail
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);
@@ -92,16 +92,14 @@ export default function Block2({ onComplete, onBack }) {
       else onComplete(gameResult);
     };
     return (
-      <>
-        <DialogueBox
-          speaker={current.speaker}
-          text={current.text}
-          avatar={current.avatar}
-          side={current.side}
-          onNext={handleNext}
-          isLast={index === outroScript.length - 1}
-        />
-      </>
+      <DialogueBox
+        speaker={current.speaker}
+        text={current.text}
+        avatar={current.avatar}
+        side={current.side}
+        onNext={handleNext}
+        isLast={index === outroScript.length - 1}
+      />
     );
   }
 }

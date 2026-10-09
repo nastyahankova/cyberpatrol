@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { socialScript, socialOutro } from '../data/socialEngineering';
-import './SocialGame.css';
+import './socialgame.css';
 
 export default function SocialGame({ onComplete }) {
   const [step, setStep] = useState(0);

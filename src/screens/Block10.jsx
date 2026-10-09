@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import ReputationGame from '../components/ReputationGame';
+import DeleteExtra from '../components/DeleteExtra';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Смотрят. Учителя, приёмная комиссия, будущие работодатели. Сейчас проверим, что можно оставлять в сети, а что лучше удалить.',
+    text: 'Смотрят. Учителя, приёмная комиссия, будущие работодатели. Сейчас ты увидишь свои посты. Удали те, которые могут навредить.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -73,7 +73,7 @@ export default function Block10({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <ReputationGame
+        <DeleteExtra
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

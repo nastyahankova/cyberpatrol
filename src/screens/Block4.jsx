@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import FinanceGame from '../components/FinanceGame';
+import SortingGame from '../components/SortingGame';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Не бывает! Но мошенники умеют это красиво подать. Сейчас я дам тебе 1000 виртуальных монет и покажу несколько предложений. Твоя задача — не потерять деньги.',
+    text: 'Не бывает! Но мошенники умеют это красиво подать. Сейчас увидишь 6 предложений. Твоя задача — разделить их на надёжные и мошеннические.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -73,7 +73,7 @@ export default function Block4({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <FinanceGame
+        <SortingGame
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import PrivacySettings from '../components/PrivacySettings';
-import PostsGame from '../components/PostsGame';
+import ProfileSetup from '../components/ProfileSetup';
+import FeedBuilder from '../components/FeedBuilder';
 
 const introScript = [
   {
@@ -18,7 +18,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Даже «безобидное» фото может раскрыть твой адрес, школу, привычки. Сейчас проверим. Сначала — настройки приватности.',
+    text: 'Даже «безобидное» фото может раскрыть твой адрес, школу, привычки. Сейчас настроим твой профиль. Подумай, что безопаснее.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -39,7 +39,7 @@ const midScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Именно. Сейчас увидишь 6 публикаций. Реши, что можно выложить, а что — лучше скрыть.',
+    text: 'Именно. Сейчас увидишь 10 постов. Выбери те, которые можно публиковать. Опасные лучше не выкладывать.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -69,14 +69,14 @@ const outroScript = [
 export default function Block5({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
-  const [settingsResult, setSettingsResult] = useState(null);
-  const [postsResult, setPostsResult] = useState(null);
+  const [setupResult, setSetupResult] = useState(null);
+  const [feedResult, setFeedResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
     const handleNext = () => {
       if (index < introScript.length - 1) setIndex(index + 1);
-      else { setIndex(0); setPhase('settings'); }
+      else { setIndex(0); setPhase('setup'); }
     };
     return (
       <>
@@ -93,12 +93,12 @@ export default function Block5({ onComplete, onBack }) {
     );
   }
 
-  if (phase === 'settings') {
+  if (phase === 'setup') {
     return (
       <>
-        <PrivacySettings
+        <ProfileSetup
           onComplete={(result) => {
-            setSettingsResult(result);
+            setSetupResult(result);
             setIndex(0);
             setPhase('mid');
           }}
@@ -112,7 +112,7 @@ export default function Block5({ onComplete, onBack }) {
     const current = midScript[index];
     const handleNext = () => {
       if (index < midScript.length - 1) setIndex(index + 1);
-      else { setIndex(0); setPhase('posts'); }
+      else { setIndex(0); setPhase('feed'); }
     };
     return (
       <DialogueBox
@@ -126,12 +126,12 @@ export default function Block5({ onComplete, onBack }) {
     );
   }
 
-  if (phase === 'posts') {
+  if (phase === 'feed') {
     return (
       <>
-        <PostsGame
+        <FeedBuilder
           onComplete={(result) => {
-            setPostsResult(result);
+            setFeedResult(result);
             setIndex(0);
             setPhase('outro');
           }}
@@ -146,8 +146,8 @@ export default function Block5({ onComplete, onBack }) {
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
       else {
-        const correct = (settingsResult?.correct || 0) + (postsResult?.correct || 0);
-        const total = (settingsResult?.total || 0) + (postsResult?.total || 0);
+        const correct = (setupResult?.correct || 0) + (feedResult?.correct || 0);
+        const total = (setupResult?.total || 0) + (feedResult?.total || 0);
         onComplete({ correct, total });
       }
     };

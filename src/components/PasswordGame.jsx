@@ -12,14 +12,12 @@ const CHIPS = {
 function evaluatePassword(pwd) {
   let score = 0;
   const checks = {
-    len8: pwd.length >= 8,
     len12: pwd.length >= 12,
     lower: /[a-zа-я]/.test(pwd),
     upper: /[A-ZА-Я]/.test(pwd),
     digit: /\d/.test(pwd),
     symbol: /[^A-Za-zА-Яа-я0-9]/.test(pwd),
   };
-  if (checks.len8) score++;
   if (checks.len12) score++;
   if (checks.lower) score++;
   if (checks.upper) score++;
@@ -30,7 +28,7 @@ function evaluatePassword(pwd) {
 
 function getStrength(score) {
   if (score <= 2) return { label: 'Очень слабый', color: '#ff5252', time: '1 сек' };
-  if (score <= 4) return { label: 'Средний', color: '#ffb800', time: '10 секунд' };
+  if (score <= 3) return { label: 'Средний', color: '#ffb800', time: '10 секунд' };
   return { label: 'Надёжный', color: '#00e676', time: '100+ лет' };
 }
 
@@ -92,7 +90,6 @@ export default function PasswordGame({ onComplete }) {
       </div>
 
       <div className="pwd-checks">
-        <Check active={checks.len8} label="8+ символов" />
         <Check active={checks.len12} label="12+ символов" />
         <Check active={checks.lower} label="Строчные буквы" />
         <Check active={checks.upper} label="Заглавные буквы" />
@@ -137,7 +134,7 @@ export default function PasswordGame({ onComplete }) {
             animate={{ scale: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 200 }}
           >
-            {score >= 5 ? (
+            {score >= 4 ? (
               <>
                 <div className="pwd-modal-icon success">✅</div>
                 <h3>Пароль надёжный!</h3>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import MobileGame from '../components/MobileGame';
+import DragOrder from '../components/DragOrder';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Нет. Если не настроить защиту — злоумышленники могут легко добраться до твоих данных. Сейчас проверим, как ты справишься с настройками.',
+    text: 'Нет. А ещё телефон можно потерять. Сейчас я покажу тебе ситуацию. Расставь действия в правильном порядке — что делать, если телефон пропал.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -26,13 +26,13 @@ const introScript = [
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Отлично! Запомни главное: блокировка экрана — биометрия, обновления — сразу, разрешения — только нужные. И не заходи в банк через публичный Wi-Fi.',
+    text: 'Отлично! Теперь ты знаешь порядок действий. Первое — позвонить, потом проверить геолокацию, заблокировать, сообщить взрослым и, если нужно, обратиться в полицию.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял! Теперь телефон точно защищён.',
+    text: 'Понял! Теперь я знаю, что делать, если потеряю телефон.',
     avatar: '/hero.png',
     side: 'left',
   },
@@ -73,7 +73,7 @@ export default function Block9({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <MobileGame
+        <DragOrder
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

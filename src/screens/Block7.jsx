@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import CyberbullyingGame from '../components/CyberbullyingGame';
+import DetectiveGame from '../components/DetectiveGame';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Да. Это когда кого-то оскорбляют, запугивают или унижают в сети. Сейчас я покажу несколько ситуаций. Твоя задача — выбрать правильную реакцию.',
+    text: 'Да. Это когда кого-то оскорбляют, запугивают или унижают в сети. Сейчас ты станешь кибер-детективом. Изучи чат класса и найди все сообщения, которые являются травлей.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -26,13 +26,13 @@ const introScript = [
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Запомни главное: не отвечай агрессией, сохраняй доказательства, рассказывай взрослым. И никогда не оставайся в стороне, если травят другого.',
+    text: 'Молодец! Ты увидел, как выглядит травля в переписке. Запомни: важно не оставаться в стороне. Если ты видишь, что кого-то травят, — сообщи взрослым.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Молчать — не всегда правильно. Иногда нужно действовать.',
+    text: 'Понял. Свидетель тоже может помочь — как Оля в чате.',
     avatar: '/hero.png',
     side: 'left',
   },
@@ -73,7 +73,7 @@ export default function Block7({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <CyberbullyingGame
+        <DetectiveGame
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

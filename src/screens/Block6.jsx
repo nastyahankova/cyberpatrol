@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import MalwareGame from '../components/MalwareGame';
+import FileSort from '../components/FileSort';
 
 const introScript = [
   {
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Чаще всего — когда ты сам что-то скачиваешь. Бесплатная игра, взломанная программа, файл от незнакомца. Сейчас проверим, сможешь ли ты отличить опасное от безопасного.',
+    text: 'Чаще всего — когда ты сам что-то скачиваешь. Бесплатная игра, взломанная программа, файл от незнакомца. Сейчас увидишь 6 файлов. Раздели их на безопасные и опасные.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -73,7 +73,7 @@ export default function Block6({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <MalwareGame
+        <FileSort
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

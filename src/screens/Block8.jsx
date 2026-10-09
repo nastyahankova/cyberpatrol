@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
-import GamingGame from '../components/GamingGame';
+import GamingChat from '../components/GamingChat';
 
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Ты любишь играть? В играх тоже полно мошенников. Они обещают скины, валюту, читы — и обманывают.',
+    text: 'Ты любишь играть? В играх тоже полно мошенников. Они обещают скины, валюту, помощь — и обманывают.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -17,7 +17,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Можно. Но важно знать типичные схемы. Сейчас проверим — безопасна ли ситуация или это обман.',
+    text: 'Можно. Но важно знать типичные схемы. Сейчас увидишь чат одной игры. Найди сообщения от мошенников.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -73,7 +73,7 @@ export default function Block8({ onComplete, onBack }) {
   if (phase === 'game') {
     return (
       <>
-        <GamingGame
+        <GamingChat
           onComplete={(result) => {
             setGameResult(result);
             setIndex(0);

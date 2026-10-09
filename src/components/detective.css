@@ -1,0 +1,204 @@
+.dt-game {
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dt-header h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.dt-header p {
+  font-size: 17px;
+  color: var(--text-soft);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.dt-case-info {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+}
+.dt-case-label {
+  color: var(--text-soft);
+  font-weight: 700;
+}
+.dt-case-victim {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.dt-chat {
+  background: rgba(20, 43, 71, 0.75);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dt-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: rgba(0, 212, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 0.5px;
+}
+.dt-chat-icon {
+  font-size: 20px;
+}
+
+.dt-messages {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  gap: 10px;
+}
+
+.dt-message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  color: var(--text-white);
+  width: 100%;
+  position: relative;
+}
+.dt-message:hover:not(:disabled) {
+  background: rgba(0, 212, 255, 0.08);
+  border-color: var(--accent-cyan);
+}
+.dt-message.selected {
+  border-color: var(--accent-yellow);
+  background: rgba(255, 184, 0, 0.12);
+}
+.dt-message.correct {
+  border-color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.12);
+}
+.dt-message.missed {
+  border-color: var(--accent-yellow);
+  background: rgba(255, 184, 0, 0.15);
+}
+.dt-message.wrong {
+  border-color: var(--accent-red);
+  background: rgba(255, 82, 82, 0.12);
+}
+.dt-message:disabled {
+  cursor: default;
+}
+
+.dt-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 47, 255, 0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.dt-message-content {
+  flex: 1;
+  min-width: 0;
+}
+.dt-message-nickname {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 6px;
+}
+.dt-message-text {
+  font-size: 15px;
+  color: var(--text-white);
+  line-height: 1.5;
+  word-break: break-word;
+}
+.dt-message-mark {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.dt-check-btn {
+  align-self: center;
+}
+
+.dt-feedback {
+  background: rgba(20, 43, 71, 0.75);
+  border: 2px solid var(--accent-cyan);
+  border-radius: 18px;
+  padding: 26px;
+}
+.dt-feedback-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 1.3;
+}
+.dt-feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.dt-feedback-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+.dt-feedback-icon {
+  font-size: 22px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.dt-feedback-label {
+  font-size: 15px;
+  color: var(--text-white);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.dt-feedback-reason {
+  font-size: 15px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+@media (max-width: 600px) {
+  .dt-header h2 { font-size: 22px; }
+  .dt-header p { font-size: 15px; }
+  .dt-message { padding: 12px 14px; gap: 10px; }
+  .dt-message-avatar { width: 34px; height: 34px; font-size: 18px; }
+  .dt-message-text { font-size: 14px; }
+  .dt-feedback { padding: 20px; }
+  .dt-feedback-title { font-size: 18px; }
+  .dt-feedback-label { font-size: 14px; }
+  .dt-feedback-reason { font-size: 14px; }
+}

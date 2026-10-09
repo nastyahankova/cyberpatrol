@@ -1,18 +1,76 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { finalBattle } from '../data/finalBattleData';
-import './FinalBattle.css';
+import './finalbattle.css';
+
+function DraggableItem({ id, text, index, finished, isCorrect }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id, disabled: finished });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  let className = 'fbt-drag-item';
+  if (isDragging) className += ' dragging';
+  if (finished) className += isCorrect ? ' correct' : ' wrong';
+
+  return (
+    <div ref={setNodeRef} style={style} className={className} {...attributes} {...listeners}>
+      <div className="fbt-drag-handle">⋮⋮</div>
+      <div className="fbt-drag-pos">{index + 1}</div>
+      <div className="fbt-drag-text">{text}</div>
+      {finished && <div className="fbt-drag-mark">{isCorrect ? '✅' : '❌'}</div>}
+    </div>
+  );
+}
 
 export default function FinalBattle({ onComplete }) {
   const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
-  const [password, setPassword] = useState('');
-  const [passwordDone, setPasswordDone] = useState(false);
+  const [answer, setAnswer] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [placed, setPlaced] = useState({});
+  const [selectedSortItem, setSelectedSortItem] = useState(null);
+  const [dragItems, setDragItems] = useState([]);
+  const [hp, setHp] = useState(10);
+  const [hitEffect, setHitEffect] = useState(false);
   const feedbackRef = useRef(null);
 
   const total = finalBattle.length;
   const current = finalBattle[index];
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } })
+  );
+
+  useEffect(() => {
+    if (current.type === 'drag-order') {
+      const shuffled = [...current.steps];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      setDragItems(shuffled);
+    }
+  }, [index, current.type]);
 
   useEffect(() => {
     if (answer && feedbackRef.current) {
@@ -22,89 +80,303 @@ export default function FinalBattle({ onComplete }) {
     }
   }, [answer]);
 
+  const dealDamage = () => {
+    setHitEffect(true);
+    setTimeout(() => setHitEffect(false), 800);
+    setHp((prev) => Math.max(0, prev - 1));
+  };
+
   const handleBinary = (choice) => {
     if (answer) return;
     setAnswer(choice);
     const isCorrect =
-      (choice === 'safe' && current.safe) ||
-      (choice === 'danger' && !current.safe);
-    if (isCorrect) setCorrectCount((c) => c + 1);
+      (choice === 'safe' && current.safe) || (choice === 'danger' && !current.safe);
+    if (isCorrect) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
   };
 
   const handleTriple = (option) => {
     if (answer) return;
     setAnswer(option.value);
-    if (option.correct) setCorrectCount((c) => c + 1);
+    if (option.correct) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
   };
 
-  const checkPassword = () => {
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (password.length >= 12) score++;
-    if (/[a-zа-я]/.test(password)) score++;
-    if (/[A-ZА-Я]/.test(password)) score++;
-    if (/\d/.test(password)) score++;
-    if (/[^A-Za-zА-Яа-я0-9]/.test(password)) score++;
+  const handlePickPassword = (item) => {
+    if (answer) return;
+    setAnswer(item.id);
+    if (item.isWeak) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
+  };
 
-    const isStrong = score >= 5;
-    setPasswordDone(true);
-    setAnswer('password');
-    if (isStrong) setCorrectCount((c) => c + 1);
+  const handleMultiClick = (id) => {
+    if (answer) return;
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectSortItem = (item) => {
+    if (answer || placed[item.id]) return;
+    setSelectedSortItem(item);
+  };
+
+  const handlePlace = (category) => {
+    if (!selectedSortItem) return;
+    setPlaced((prev) => ({ ...prev, [selectedSortItem.id]: category }));
+    setSelectedSortItem(null);
+  };
+
+  const handleUndo = (id) => {
+    if (answer) return;
+    setPlaced((prev) => {
+      const copy = { ...prev };
+      delete copy[id];
+      return copy;
+    });
+  };
+
+  const handleDragEnd = (event) => {
+    if (answer) return;
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setDragItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleCheckMulti = () => {
+    setAnswer('multi');
+    let correct = 0;
+    let totalCorrect = 0;
+    if (current.type === 'find-mistake-in-email') {
+      correct = current.parts.filter((p) => p.isSuspicious && selectedItems.includes(p.id)).length;
+      totalCorrect = current.parts.filter((p) => p.isSuspicious).length;
+    } else if (current.type === 'delete-extra') {
+      correct = current.items.filter((i) => i.isDangerous && selectedItems.includes(i.id)).length;
+      totalCorrect = current.items.filter((i) => i.isDangerous).length;
+    } else if (current.type === 'detective') {
+      correct = current.messages.filter((m) => m.isBullying && selectedItems.includes(m.id)).length;
+      totalCorrect = current.messages.filter((m) => m.isBullying).length;
+    } else if (current.type === 'find-scammer') {
+      correct = current.messages.filter((m) => m.isScammer && selectedItems.includes(m.id)).length;
+      totalCorrect = current.messages.filter((m) => m.isScammer).length;
+    }
+    const isPerfect = correct === totalCorrect;
+    if (isPerfect) setCorrectCount((c) => c + 1);
+    if (correct > 0) dealDamage();
+  };
+
+  const handleCheckSorting = () => {
+    setAnswer('sorting');
+    const correct = current.items.filter((item) => {
+      const cat = placed[item.id];
+      return (
+        (item.isDangerous && cat === 'danger') ||
+        (!item.isDangerous && cat === 'safe')
+      );
+    }).length;
+    const isPerfect = correct === current.items.length;
+    if (isPerfect) setCorrectCount((c) => c + 1);
+    if (correct > 0) dealDamage();
+  };
+
+  const handleCheckDrag = () => {
+    setAnswer('drag');
+    const correct = dragItems.filter(
+      (item, idx) => item.correctPosition === idx + 1
+    ).length;
+    const isPerfect = correct === dragItems.length;
+    if (isPerfect) setCorrectCount((c) => c + 1);
+    if (correct > 0) dealDamage();
   };
 
   const handleNext = () => {
     if (index < total - 1) {
       setIndex(index + 1);
       setAnswer(null);
-      setPassword('');
-      setPasswordDone(false);
+      setSelectedItems([]);
+      setPlaced({});
+      setSelectedSortItem(null);
+      setDragItems([]);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       onComplete(correctCount);
     }
   };
 
-  // === РЕНДЕР ОБРАТНОЙ СВЯЗИ ===
-  const renderFeedback = () => {
+  const renderAnswerFeedback = () => {
     if (!answer) return null;
 
     let isCorrect = false;
     let reason = '';
+    let title = '';
 
     if (current.type === 'binary') {
       isCorrect =
-        (answer === 'safe' && current.safe) ||
-        (answer === 'danger' && !current.safe);
+        (answer === 'safe' && current.safe) || (answer === 'danger' && !current.safe);
       reason = current.reason;
+      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
     } else if (current.type === 'triple') {
       const chosen = current.options.find((o) => o.value === answer);
       isCorrect = chosen.correct;
       reason = chosen.reason;
-    } else if (current.type === 'password') {
-      let score = 0;
-      if (password.length >= 8) score++;
-      if (password.length >= 12) score++;
-      if (/[a-zа-я]/.test(password)) score++;
-      if (/[A-ZА-Я]/.test(password)) score++;
-      if (/\d/.test(password)) score++;
-      if (/[^A-Za-zА-Яа-я0-9]/.test(password)) score++;
-      isCorrect = score >= 5;
-      reason = isCorrect
-        ? 'Отличный пароль! Профессор не сможет его взломать.'
-        : 'Слабый пароль. Нужно минимум 12 символов, заглавные буквы, цифры и знаки.';
+      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
+    } else if (current.type === 'pick-worst-password') {
+      const chosen = current.items.find((i) => i.id === answer);
+      isCorrect = chosen.isWeak;
+      reason = current.correctReason;
+      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
+    } else if (answer === 'multi') {
+      let correct = 0;
+      let totalCorrect = 0;
+      if (current.type === 'find-mistake-in-email') {
+        correct = current.parts.filter((p) => p.isSuspicious && selectedItems.includes(p.id)).length;
+        totalCorrect = current.parts.filter((p) => p.isSuspicious).length;
+      } else if (current.type === 'delete-extra') {
+        correct = current.items.filter((i) => i.isDangerous && selectedItems.includes(i.id)).length;
+        totalCorrect = current.items.filter((i) => i.isDangerous).length;
+      } else if (current.type === 'detective') {
+        correct = current.messages.filter((m) => m.isBullying && selectedItems.includes(m.id)).length;
+        totalCorrect = current.messages.filter((m) => m.isBullying).length;
+      } else if (current.type === 'find-scammer') {
+        correct = current.messages.filter((m) => m.isScammer && selectedItems.includes(m.id)).length;
+        totalCorrect = current.messages.filter((m) => m.isScammer).length;
+      }
+      isCorrect = correct === totalCorrect;
+      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${totalCorrect})` : '❌ Промах';
+      reason = 'Смотри разбор ниже.';
+    } else if (answer === 'sorting') {
+      const correct = current.items.filter((item) => {
+        const cat = placed[item.id];
+        return (item.isDangerous && cat === 'danger') || (!item.isDangerous && cat === 'safe');
+      }).length;
+      isCorrect = correct === current.items.length;
+      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${current.items.length})` : '❌ Промах';
+      reason = 'Смотри разбор ниже.';
+    } else if (answer === 'drag') {
+      const correct = dragItems.filter((item, idx) => item.correctPosition === idx + 1).length;
+      isCorrect = correct === dragItems.length;
+      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${dragItems.length})` : '❌ Промах';
+      reason = 'Смотри правильный порядок ниже.';
     }
 
     return (
       <motion.div
         ref={feedbackRef}
-        className={`fb-feedback ${isCorrect ? 'correct' : 'wrong'}`}
+        className={`fbt-feedback ${isCorrect ? 'correct' : 'wrong'}`}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
       >
-        <div className="fb-feedback-title">
-          {isCorrect ? '✅ Верно!' : '❌ Ошибка'}
-        </div>
-        <p className="fb-feedback-reason">{reason}</p>
+        <div className="fbt-feedback-title">{title}</div>
+        <p className="fbt-feedback-reason">{reason}</p>
+
+        {current.type === 'find-mistake-in-email' && (
+          <div className="fbt-feedback-list">
+            {current.parts.map((p) => (
+              <div key={p.id} className="fbt-feedback-item">
+                <span className={`fbt-feedback-icon ${p.isSuspicious ? 'danger' : 'safe'}`}>
+                  {p.isSuspicious ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <div className="fbt-feedback-label"><b>{p.label}:</b> {p.value}</div>
+                  <div className="fbt-feedback-reason-small">{p.reason}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {current.type === 'delete-extra' && (
+          <div className="fbt-feedback-list">
+            {current.items.map((i) => (
+              <div key={i.id} className="fbt-feedback-item">
+                <span className={`fbt-feedback-icon ${i.isDangerous ? 'danger' : 'safe'}`}>
+                  {i.isDangerous ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <div className="fbt-feedback-label">{i.icon ? `${i.icon} ` : ''}{i.value}</div>
+                  <div className="fbt-feedback-reason-small">{i.reason}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {current.type === 'sorting' && (
+          <div className="fbt-feedback-list">
+            {current.items.map((i) => (
+              <div key={i.id} className="fbt-feedback-item">
+                <span className={`fbt-feedback-icon ${i.isDangerous ? 'danger' : 'safe'}`}>
+                  {i.isDangerous ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <div className="fbt-feedback-label">{i.icon ? `${i.icon} ` : ''}{i.value}</div>
+                  <div className="fbt-feedback-reason-small">{i.reason}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {current.type === 'detective' && (
+          <div className="fbt-feedback-list">
+            {current.messages.map((m) => (
+              <div key={m.id} className="fbt-feedback-item">
+                <span className={`fbt-feedback-icon ${m.isBullying ? 'danger' : 'safe'}`}>
+                  {m.isBullying ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <div className="fbt-feedback-label"><b>{m.nickname}:</b> {m.text}</div>
+                  <div className="fbt-feedback-reason-small">{m.reason}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {current.type === 'find-scammer' && (
+          <div className="fbt-feedback-list">
+            {current.messages.map((m) => (
+              <div key={m.id} className="fbt-feedback-item">
+                <span className={`fbt-feedback-icon ${m.isScammer ? 'danger' : 'safe'}`}>
+                  {m.isScammer ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <div className="fbt-feedback-label"><b>{m.nickname}:</b> {m.text}</div>
+                  <div className="fbt-feedback-reason-small">{m.reason}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {current.type === 'drag-order' && (
+          <div className="fbt-feedback-list">
+            {current.steps
+              .slice()
+              .sort((a, b) => a.correctPosition - b.correctPosition)
+              .map((s) => (
+                <div key={s.id} className="fbt-feedback-item">
+                  <span className="fbt-feedback-num">{s.correctPosition}</span>
+                  <div>
+                    <div className="fbt-feedback-label">{s.text}</div>
+                    <div className="fbt-feedback-reason-small">{s.reason}</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+
         <button className="btn-primary" onClick={handleNext}>
           {index < total - 1 ? 'Дальше →' : 'Завершить битву'}
         </button>
@@ -112,13 +384,12 @@ export default function FinalBattle({ onComplete }) {
     );
   };
 
-  // === РЕНДЕР ЗАДАНИЯ ===
   const renderTask = () => {
     if (current.type === 'binary') {
       return (
-        <div className="fb-buttons">
+        <div className="fbt-buttons">
           <motion.button
-            className="fb-btn safe"
+            className="fbt-btn safe"
             onClick={() => handleBinary('safe')}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -127,7 +398,7 @@ export default function FinalBattle({ onComplete }) {
             ✅ Безопасно
           </motion.button>
           <motion.button
-            className="fb-btn danger"
+            className="fbt-btn danger"
             onClick={() => handleBinary('danger')}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -141,11 +412,11 @@ export default function FinalBattle({ onComplete }) {
 
     if (current.type === 'triple') {
       return (
-        <div className="fb-options">
+        <div className="fbt-options">
           {current.options.map((opt) => {
             const isChosen = answer === opt.value;
             const showResult = answer !== null;
-            let className = 'fb-option';
+            let className = 'fbt-option';
             if (showResult && isChosen) {
               className += opt.correct ? ' chosen-correct' : ' chosen-wrong';
             } else if (showResult && opt.correct) {
@@ -166,27 +437,240 @@ export default function FinalBattle({ onComplete }) {
       );
     }
 
-    if (current.type === 'password') {
+    if (current.type === 'pick-worst-password') {
       return (
-        <div className="fb-password">
-          <input
-            type="text"
-            className="fb-password-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Введи пароль"
-            disabled={passwordDone}
-          />
-          {!passwordDone && (
+        <div className="fbt-options">
+          {current.items.map((item) => {
+            const isChosen = answer === item.id;
+            const showResult = answer !== null;
+            let className = 'fbt-option fbt-password';
+            if (showResult && isChosen) {
+              className += item.isWeak ? ' chosen-correct' : ' chosen-wrong';
+            }
+            return (
+              <button
+                key={item.id}
+                className={className}
+                onClick={() => handlePickPassword(item)}
+                disabled={answer !== null}
+              >
+                {item.value}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    if (current.type === 'find-mistake-in-email') {
+      return (
+        <>
+          <div className="fbt-parts">
+            {current.parts.map((part) => {
+              const isSelected = selectedItems.includes(part.id);
+              let className = 'fbt-part';
+              if (isSelected) className += ' selected';
+              return (
+                <motion.button
+                  key={part.id}
+                  className={className}
+                  onClick={() => handleMultiClick(part.id)}
+                  whileHover={!answer ? { scale: 1.01, x: 4 } : {}}
+                  disabled={!!answer}
+                >
+                  <div className="fbt-part-label">{part.label}</div>
+                  <div className="fbt-part-value">{part.value}</div>
+                </motion.button>
+              );
+            })}
+          </div>
+          {!answer && (
             <button
-              className="btn-primary"
-              onClick={checkPassword}
-              disabled={!password}
+              className="btn-primary fbt-check-btn"
+              onClick={handleCheckMulti}
+              disabled={selectedItems.length === 0}
             >
-              Проверить пароль
+              Проверить ({selectedItems.length})
             </button>
           )}
-        </div>
+        </>
+      );
+    }
+
+    if (current.type === 'delete-extra') {
+      return (
+        <>
+          <div className="fbt-posts">
+            {current.items.map((item) => {
+              const isSelected = selectedItems.includes(item.id);
+              let className = 'fbt-post';
+              if (isSelected) className += ' selected';
+              return (
+                <motion.button
+                  key={item.id}
+                  className={className}
+                  onClick={() => handleMultiClick(item.id)}
+                  whileHover={!answer ? { scale: 1.02 } : {}}
+                  disabled={!!answer}
+                >
+                  {item.icon ? `${item.icon} ` : ''}{item.value}
+                </motion.button>
+              );
+            })}
+          </div>
+          {!answer && (
+            <button
+              className="btn-primary fbt-check-btn"
+              onClick={handleCheckMulti}
+              disabled={selectedItems.length === 0}
+            >
+              Проверить ({selectedItems.length})
+            </button>
+          )}
+        </>
+      );
+    }
+
+    if (current.type === 'sorting') {
+      const unplaced = current.items.filter((i) => !placed[i.id]);
+      const allPlaced = current.items.every((i) => placed[i.id]);
+      return (
+        <>
+          <div className="fbt-sort-pool">
+            {unplaced.map((item) => (
+              <motion.button
+                key={item.id}
+                className={`fbt-sort-item ${selectedSortItem?.id === item.id ? 'selected' : ''}`}
+                onClick={() => handleSelectSortItem(item)}
+                whileHover={!answer ? { scale: 1.02 } : {}}
+                disabled={!!answer}
+              >
+                {item.icon ? `${item.icon} ` : ''}{item.value}
+              </motion.button>
+            ))}
+            {unplaced.length === 0 && !answer && (
+              <div className="fbt-sort-empty">Все распределены</div>
+            )}
+          </div>
+
+          {selectedSortItem && !answer && (
+            <div className="fbt-sort-actions">
+              <button className="fbt-btn safe" onClick={() => handlePlace('safe')}>
+                ✅ Безопасный
+              </button>
+              <button className="fbt-btn danger" onClick={() => handlePlace('danger')}>
+                ⚠️ Опасный
+              </button>
+            </div>
+          )}
+
+          <div className="fbt-columns">
+            <div className="fbt-column safe-col">
+              <div className="fbt-col-header">✅ Безопасные</div>
+              {current.items
+                .filter((i) => placed[i.id] === 'safe')
+                .map((i) => (
+                  <div
+                    key={i.id}
+                    className="fbt-col-item"
+                    onClick={() => !answer && handleUndo(i.id)}
+                  >
+                    {i.icon ? `${i.icon} ` : ''}{i.value}
+                  </div>
+                ))}
+            </div>
+            <div className="fbt-column danger-col">
+              <div className="fbt-col-header">⚠️ Опасные</div>
+              {current.items
+                .filter((i) => placed[i.id] === 'danger')
+                .map((i) => (
+                  <div
+                    key={i.id}
+                    className="fbt-col-item"
+                    onClick={() => !answer && handleUndo(i.id)}
+                  >
+                    {i.icon ? `${i.icon} ` : ''}{i.value}
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          {!answer && (
+            <button
+              className="btn-primary fbt-check-btn"
+              onClick={handleCheckSorting}
+              disabled={!allPlaced}
+            >
+              Проверить
+            </button>
+          )}
+        </>
+      );
+    }
+
+    if (current.type === 'detective' || current.type === 'find-scammer') {
+      return (
+        <>
+          <div className="fbt-chat">
+            {current.messages.map((msg) => {
+              const isSelected = selectedItems.includes(msg.id);
+              let className = 'fbt-message';
+              if (isSelected) className += ' selected';
+              return (
+                <motion.button
+                  key={msg.id}
+                  className={className}
+                  onClick={() => handleMultiClick(msg.id)}
+                  whileHover={!answer ? { scale: 1.01, x: 4 } : {}}
+                  disabled={!!answer}
+                >
+                  <div className="fbt-msg-avatar">{msg.avatar}</div>
+                  <div className="fbt-msg-content">
+                    <div className="fbt-msg-nick">{msg.nickname}</div>
+                    <div className="fbt-msg-text">{msg.text}</div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+          {!answer && (
+            <button
+              className="btn-primary fbt-check-btn"
+              onClick={handleCheckMulti}
+              disabled={selectedItems.length === 0}
+            >
+              Проверить ({selectedItems.length})
+            </button>
+          )}
+        </>
+      );
+    }
+
+    if (current.type === 'drag-order') {
+      return (
+        <>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={dragItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+              <div className="fbt-drag-list">
+                {dragItems.map((item, idx) => (
+                  <DraggableItem
+                    key={item.id}
+                    id={item.id}
+                    text={item.text}
+                    index={idx}
+                    finished={!!answer}
+                    isCorrect={item.correctPosition === idx + 1}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+          {!answer && (
+            <button className="btn-primary fbt-check-btn" onClick={handleCheckDrag}>
+              Проверить
+            </button>
+          )}
+        </>
       );
     }
 
@@ -194,37 +678,54 @@ export default function FinalBattle({ onComplete }) {
   };
 
   return (
-    <div className="fb-game">
-      <div className="fb-header">
-        <div className="fb-vs">
-          <img src="/hacker.png" alt="Профессор" className="fb-hacker-mini" />
-          <div>
-            <div className="fb-progress-label">Финальная атака</div>
-            <div className="fb-progress-value">Раунд {index + 1} / {total}</div>
+    <div className="fbt-game">
+      <div className="fbt-header">
+        <div className="fbt-vs">
+          <motion.div
+            className={`fbt-hacker-avatar ${hitEffect ? 'hit' : ''}`}
+            animate={hitEffect ? { x: [0, -8, 8, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <img src="/hacker.png" alt="Фантом" />
+          </motion.div>
+          <div className="fbt-info">
+            <div className="fbt-name">Фантом</div>
+            <div className="fbt-hp-bar">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`fbt-hp-cell ${i < hp ? 'alive' : 'dead'}`}
+                />
+              ))}
+            </div>
+            <div className="fbt-hp-label">HP: {hp} / 10</div>
           </div>
         </div>
-        <div className="fb-score">
-          Правильно: {correctCount}
+        <div className="fbt-score">
+          <div className="fbt-score-label">Раунд</div>
+          <div className="fbt-score-value">{index + 1} / {total}</div>
+          <div className="fbt-score-label">Верно</div>
+          <div className="fbt-score-value">{correctCount}</div>
         </div>
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
-          className="fb-card"
+          className="fbt-card"
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -60, opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="fb-icon">{current.icon}</div>
-          <h3 className="fb-title">{current.title}</h3>
-          <p className="fb-text">{current.text}</p>
+          <div className="fbt-icon">{current.icon}</div>
+          <h3 className="fbt-title">{current.title}</h3>
+          <p className="fbt-text">{current.text}</p>
         </motion.div>
       </AnimatePresence>
 
       {!answer && renderTask()}
-      {renderFeedback()}
+      {renderAnswerFeedback()}
     </div>
   );
 }
