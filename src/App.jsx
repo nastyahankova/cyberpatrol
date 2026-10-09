@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import IntroScreen from './screens/IntroScreen';
 import Block1 from './screens/Block1';
 import Block2 from './screens/Block2';
@@ -24,6 +24,7 @@ import './App.css';
 function App() {
   const [screen, setScreen] = useState('start');
   const [progress, setProgress] = useState(loadProgress());
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const { playClick } = useSound();
 
   const hasProgress = progress.completed.length > 0;
@@ -52,10 +53,24 @@ function App() {
     setScreen('levels');
   };
 
-  const startOver = () => {
+  const handleStartClick = () => {
+    playClick();
+    if (hasProgress) {
+      setShowResetConfirm(true);
+    } else {
+      setScreen('intro');
+    }
+  };
+
+  const confirmStartOver = () => {
     resetProgress();
     setProgress(loadProgress());
+    setShowResetConfirm(false);
     setScreen('intro');
+  };
+
+  const cancelStartOver = () => {
+    setShowResetConfirm(false);
   };
 
   return (
@@ -64,7 +79,7 @@ function App() {
 
       {screen === 'start' && (
         <StartScreen
-          onStart={startOver}
+          onStart={handleStartClick}
           onContinue={() => setScreen('levels')}
           onAbout={() => setScreen('about')}
           onProfile={() => setScreen('profile')}
@@ -120,6 +135,42 @@ function App() {
           <button onClick={() => setScreen('levels')}>← К карте миссий</button>
         </div>
       )}
+
+      <AnimatePresence>
+        {showResetConfirm && (
+          <motion.div
+            className="reset-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={cancelStartOver}
+          >
+            <motion.div
+              className="reset-modal"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="reset-icon">⚠️</div>
+              <h2>Начать заново?</h2>
+              <p>
+                Текущий прогресс будет сброшен: все пройденные миссии,
+                результаты и достижения удалятся. Это действие нельзя отменить.
+              </p>
+              <div className="reset-actions">
+                <button className="btn-secondary" onClick={cancelStartOver}>
+                  Отмена
+                </button>
+                <button className="btn-danger" onClick={confirmStartOver}>
+                  Начать заново
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

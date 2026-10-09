@@ -235,3 +235,30 @@
   .reset-modal { padding: 24px; }
   .reset-modal h2 { font-size: 20px; }
 }
+.profile-btn-inline {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--accent-cyan);
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid var(--accent-cyan);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-body);
+}
+.profile-btn-inline:hover {
+  background: var(--accent-cyan);
+  color: var(--bg-deep);
+}
+
+@media (max-width: 600px) {
+  .profile-btn-inline {
+    position: static;
+    margin: 12px auto 0;
+    display: block;
+  }
+}

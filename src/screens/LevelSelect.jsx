@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BLOCKS, loadProgress, isBlockUnlocked, getProgressPercent, resetProgress } from '../utils/progress';
+import ProfileModal from '../components/ProfileModal';
 
 export default function LevelSelect({ onSelect, onBack, onReset }) {
   const progress = loadProgress();
   const percent = getProgressPercent(progress);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const handleResetClick = () => {
     setShowConfirm(true);
@@ -26,6 +28,11 @@ export default function LevelSelect({ onSelect, onBack, onReset }) {
       <div className="level-header">
         <button className="back-btn-inline" onClick={onBack}>← На главную</button>
         <h1>Карта миссий</h1>
+
+        <button className="profile-btn-inline" onClick={() => setShowProfile(true)}>
+          📊 Профиль
+        </button>
+
         <div className="level-progress-info">
           <span>Прогресс: {percent}%</span>
           <div className="level-progress-bar">
@@ -108,6 +115,10 @@ export default function LevelSelect({ onSelect, onBack, onReset }) {
               </div>
             </motion.div>
           </motion.div>
+        )}
+
+        {showProfile && (
+          <ProfileModal onClose={() => setShowProfile(false)} />
         )}
       </AnimatePresence>
     </div>
