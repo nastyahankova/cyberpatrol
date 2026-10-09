@@ -21,9 +21,8 @@ export default function Profile({ onBack, onLevels }) {
     if (progress.finalBattle?.rank) {
       return progress.finalBattle.rank;
     }
-    if (blocksDone >= 9) return 'Легенда КиберПатруля';
-    if (blocksDone >= 6) return 'Киберзащитник';
-    if (blocksDone >= 3) return 'Патрульный';
+    if (blocksDone >= 8) return 'Киберзащитник';
+    if (blocksDone >= 4) return 'Патрульный';
     return 'Новичок';
   };
 

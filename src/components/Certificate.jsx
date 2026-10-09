@@ -38,7 +38,7 @@ export default function Certificate({ score, total, rank }) {
       },
       jsPDF: {
         unit: 'mm',
-        format: 'a4',
+        format: [297, 210],
         orientation: 'landscape',
       },
       pagebreak: { mode: 'avoid-all' },
