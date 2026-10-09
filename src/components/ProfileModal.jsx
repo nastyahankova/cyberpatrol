@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   BLOCKS,
@@ -29,6 +30,14 @@ export default function ProfileModal({ onClose }) {
 
   const rank = getRankByProgress();
 
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
   return (
     <motion.div
       className="pm-overlay"
@@ -45,7 +54,14 @@ export default function ProfileModal({ onClose }) {
         transition={{ type: 'spring', stiffness: 200 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="pm-close" onClick={onClose}>✕</button>
+        <button
+          className="pm-close"
+          onClick={onClose}
+          aria-label="Закрыть"
+          type="button"
+        >
+          ✕
+        </button>
 
         <div className="pm-header">
           <div className="pm-avatar">🛡️</div>

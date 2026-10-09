@@ -171,9 +171,12 @@ export default function FinalBattle({ onComplete }) {
       correct = current.messages.filter((m) => m.isScammer && selectedItems.includes(m.id)).length;
       totalCorrect = current.messages.filter((m) => m.isScammer).length;
     }
-    const isPerfect = correct === totalCorrect;
-    if (isPerfect) setCorrectCount((c) => c + 1);
-    if (correct > 0) dealDamage();
+    const wrongPicks = selectedItems.length - correct;
+    const isPerfect = correct === totalCorrect && wrongPicks === 0;
+    if (isPerfect) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
   };
 
   const handleCheckSorting = () => {
@@ -186,8 +189,10 @@ export default function FinalBattle({ onComplete }) {
       );
     }).length;
     const isPerfect = correct === current.items.length;
-    if (isPerfect) setCorrectCount((c) => c + 1);
-    if (correct > 0) dealDamage();
+    if (isPerfect) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
   };
 
   const handleCheckDrag = () => {
@@ -196,8 +201,10 @@ export default function FinalBattle({ onComplete }) {
       (item, idx) => item.correctPosition === idx + 1
     ).length;
     const isPerfect = correct === dragItems.length;
-    if (isPerfect) setCorrectCount((c) => c + 1);
-    if (correct > 0) dealDamage();
+    if (isPerfect) {
+      setCorrectCount((c) => c + 1);
+      dealDamage();
+    }
   };
 
   const handleNext = () => {
@@ -210,7 +217,7 @@ export default function FinalBattle({ onComplete }) {
       setDragItems([]);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      onComplete(correctCount);
+      onComplete({ correct: correctCount, total, hp });
     }
   };
 
@@ -225,17 +232,20 @@ export default function FinalBattle({ onComplete }) {
       isCorrect =
         (answer === 'safe' && current.safe) || (answer === 'danger' && !current.safe);
       reason = current.reason;
-      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
+      title = isCorrect ? '⚔️ Удар нанесён! Фантом потерял 1 HP' : '❌ Промах. Фантом не пострадал';
     } else if (current.type === 'triple') {
       const chosen = current.options.find((o) => o.value === answer);
       isCorrect = chosen.correct;
       reason = chosen.reason;
-      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
+      title = isCorrect ? '⚔️ Удар нанесён! Фантом потерял 1 HP' : '❌ Промах. Фантом не пострадал';
     } else if (current.type === 'pick-worst-password') {
       const chosen = current.items.find((i) => i.id === answer);
+      const weakItem = current.items.find((i) => i.isWeak);
       isCorrect = chosen.isWeak;
-      reason = current.correctReason;
-      title = isCorrect ? '⚔️ Удар нанесён!' : '❌ Промах';
+      reason = isCorrect
+        ? `Правильно! «${chosen.value}» — слишком простой пароль. Ты получил доступ к серверу Фантома.`
+        : `Ты выбрал «${chosen.value}», но этот пароль не самый слабый. Самый слабый — «${weakItem.value}». Фантом не пострадал.`;
+      title = isCorrect ? '⚔️ Удар нанесён! Фантом потерял 1 HP' : '❌ Промах. Фантом не пострадал';
     } else if (answer === 'multi') {
       let correct = 0;
       let totalCorrect = 0;
@@ -252,8 +262,11 @@ export default function FinalBattle({ onComplete }) {
         correct = current.messages.filter((m) => m.isScammer && selectedItems.includes(m.id)).length;
         totalCorrect = current.messages.filter((m) => m.isScammer).length;
       }
-      isCorrect = correct === totalCorrect;
-      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${totalCorrect})` : '❌ Промах';
+      const wrongPicks = selectedItems.length - correct;
+      isCorrect = correct === totalCorrect && wrongPicks === 0;
+      title = isCorrect
+        ? '⚔️ Удар нанесён! Фантом потерял 1 HP'
+        : `❌ Промах. Фантом не пострадал (правильно: ${correct} из ${totalCorrect}${wrongPicks > 0 ? `, лишних: ${wrongPicks}` : ''})`;
       reason = 'Смотри разбор ниже.';
     } else if (answer === 'sorting') {
       const correct = current.items.filter((item) => {
@@ -261,12 +274,16 @@ export default function FinalBattle({ onComplete }) {
         return (item.isDangerous && cat === 'danger') || (!item.isDangerous && cat === 'safe');
       }).length;
       isCorrect = correct === current.items.length;
-      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${current.items.length})` : '❌ Промах';
+      title = isCorrect
+        ? '⚔️ Удар нанесён! Фантом потерял 1 HP'
+        : `❌ Промах. Фантом не пострадал (правильно: ${correct} из ${current.items.length})`;
       reason = 'Смотри разбор ниже.';
     } else if (answer === 'drag') {
       const correct = dragItems.filter((item, idx) => item.correctPosition === idx + 1).length;
       isCorrect = correct === dragItems.length;
-      title = correct > 0 ? `⚔️ Удар нанесён! (${correct} из ${dragItems.length})` : '❌ Промах';
+      title = isCorrect
+        ? '⚔️ Удар нанесён! Фантом потерял 1 HP'
+        : `❌ Промах. Фантом не пострадал (правильно: ${correct} из ${dragItems.length})`;
       reason = 'Смотри правильный порядок ниже.';
     }
 
@@ -446,6 +463,8 @@ export default function FinalBattle({ onComplete }) {
             let className = 'fbt-option fbt-password';
             if (showResult && isChosen) {
               className += item.isWeak ? ' chosen-correct' : ' chosen-wrong';
+            } else if (showResult && item.isWeak) {
+              className += ' highlight-correct';
             }
             return (
               <button

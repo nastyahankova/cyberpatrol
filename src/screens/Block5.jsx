@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import DialogueBox from '../components/DialogueBox';
 import ProfileSetup from '../components/ProfileSetup';
-import FeedBuilder from '../components/FeedBuilder';
 
 const introScript = [
   {
@@ -24,31 +23,10 @@ const introScript = [
   },
 ];
 
-const midScript = [
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Отлично! Теперь ты знаешь, какие настройки безопаснее. Но приватность — это не только настройки, но и то, что ты публикуешь.',
-    avatar: '/mentor.png',
-    side: 'right',
-  },
-  {
-    speaker: 'Ты',
-    text: 'То есть даже обычное фото может быть опасным?',
-    avatar: '/hero.png',
-    side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Именно. Сейчас увидишь 10 постов. Выбери те, которые можно публиковать. Опасные лучше не выкладывать.',
-    avatar: '/mentor.png',
-    side: 'right',
-  },
-];
-
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Главное правило: перед публикацией подумай — «А что по этому фото можно обо мне узнать?»',
+    text: 'Молодец! Теперь ты знаешь, какие настройки приватности безопаснее. Главное правило: перед публикацией подумай — «А что по этому фото можно обо мне узнать?»',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -70,7 +48,6 @@ export default function Block5({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
   const [setupResult, setSetupResult] = useState(null);
-  const [feedResult, setFeedResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
@@ -100,39 +77,6 @@ export default function Block5({ onComplete, onBack }) {
           onComplete={(result) => {
             setSetupResult(result);
             setIndex(0);
-            setPhase('mid');
-          }}
-        />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
-      </>
-    );
-  }
-
-  if (phase === 'mid') {
-    const current = midScript[index];
-    const handleNext = () => {
-      if (index < midScript.length - 1) setIndex(index + 1);
-      else { setIndex(0); setPhase('feed'); }
-    };
-    return (
-      <DialogueBox
-        speaker={current.speaker}
-        text={current.text}
-        avatar={current.avatar}
-        side={current.side}
-        onNext={handleNext}
-        isLast={index === midScript.length - 1}
-      />
-    );
-  }
-
-  if (phase === 'feed') {
-    return (
-      <>
-        <FeedBuilder
-          onComplete={(result) => {
-            setFeedResult(result);
-            setIndex(0);
             setPhase('outro');
           }}
         />
@@ -145,11 +89,7 @@ export default function Block5({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else {
-        const correct = (setupResult?.correct || 0) + (feedResult?.correct || 0);
-        const total = (setupResult?.total || 0) + (feedResult?.total || 0);
-        onComplete({ correct, total });
-      }
+      else onComplete(setupResult);
     };
     return (
       <DialogueBox

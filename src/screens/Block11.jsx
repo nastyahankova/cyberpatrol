@@ -8,7 +8,7 @@ import './Block11.css';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Вот и всё. Профессор собрал всех своих помощников и готовит финальную атаку на школу. Это решающий бой.',
+    text: 'Вот и всё. «Фантом» собрал всех своих помощников и готовит финальную атаку на школу. Это решающий бой.',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -20,7 +20,7 @@ const introScript = [
   },
   {
     speaker: 'Анастасия Александровна',
-    text: 'Тогда вперёд. 10 раундов — 10 атак. Применяй всё, чему научился. Удачи, КиберПатруль!',
+    text: 'Тогда вперёд. 10 раундов — 10 атак. Каждый правильный ответ отнимает у «Фантома» одно деление здоровья. Применяй всё, чему научился. Удачи, КиберПатруль!',
     avatar: '/mentor.png',
     side: 'right',
   },
@@ -38,6 +38,13 @@ export default function Block11({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
   const [result, setResult] = useState(null);
+
+  const handleRestart = () => {
+    setResult(null);
+    setIndex(0);
+    setPhase('battle');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (phase === 'intro') {
     const current = introScript[index];
@@ -64,10 +71,9 @@ export default function Block11({ onComplete, onBack }) {
     return (
       <>
         <FinalBattle
-          onComplete={(score) => {
-            const total = 10;
-            const rank = getRank(score, total);
-            setResult({ score, total, rank });
+          onComplete={({ correct, total, hp }) => {
+            const rank = getRank(correct, total);
+            setResult({ score: correct, total, hp, rank });
             setPhase('result');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
@@ -78,8 +84,8 @@ export default function Block11({ onComplete, onBack }) {
   }
 
   if (phase === 'result') {
-    const { score, total, rank } = result;
-    const isVictory = score >= 5;
+    const { score, total, hp, rank } = result;
+    const isVictory = hp === 0;
 
     return (
       <div className="b11-result">
@@ -89,20 +95,20 @@ export default function Block11({ onComplete, onBack }) {
           transition={{ type: 'spring', stiffness: 150 }}
           className="b11-result-content"
         >
-          <div className="b11-hacker">
-            <img src="/hacker.png" alt="Профессор" />
+          <div className={`b11-hacker ${isVictory ? '' : 'escaped'}`}>
+            <img src="/hacker.png" alt="Фантом" />
             <div className="b11-hacker-overlay">
               {isVictory ? 'ПОБЕЖДЁН' : 'СБЕЖАЛ'}
             </div>
           </div>
 
           <h2 className="b11-title">
-            {isVictory ? '🎉 Школа спасена!' : '⚠️ Профессор сбежал'}
+            {isVictory ? '🎉 Школа спасена!' : '⚠️ Фантом сбежал'}
           </h2>
           <p className="b11-subtitle">
             {isVictory
-              ? 'Ты отразил все атаки и защитил школу.'
-              : 'Ты справился не со всеми атаками. Профессор вернётся, но ты можешь потренироваться.'}
+              ? 'Ты отразил все атаки и полностью победил Фантома!'
+              : `Фантом потерял ${10 - hp} из 10 жизней, но уцелел. Попробуй пройти финал без ошибок — тогда он будет побеждён.`}
           </p>
 
           <div className="b11-stats">
@@ -111,12 +117,25 @@ export default function Block11({ onComplete, onBack }) {
               <div className="b11-stat-value">{score} / {total}</div>
             </div>
             <div className="b11-stat">
+              <div className="b11-stat-label">HP Фантома</div>
+              <div className="b11-stat-value">{hp} / 10</div>
+            </div>
+            <div className="b11-stat">
               <div className="b11-stat-label">Твой ранг</div>
               <div className="b11-stat-value rank">{rank}</div>
             </div>
           </div>
 
-          <Certificate score={score} total={total} rank={rank} />
+          {isVictory ? (
+            <Certificate score={score} total={total} rank={rank} />
+          ) : (
+            <button
+              className="btn-primary b11-restart"
+              onClick={handleRestart}
+            >
+              🔄 Пройти финал заново
+            </button>
+          )}
 
           <button
             className="btn-secondary b11-complete"
