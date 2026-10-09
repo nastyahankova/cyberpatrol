@@ -13,9 +13,21 @@ export default function Profile({ onBack, onLevels }) {
   const percent = getProgressPercent(progress);
   const average = getAverageScore(progress);
   const achievements = getAchievements(progress);
-  const blocksToShow = BLOCKS.filter(b => b.id !== 'intro');
+  const blocksToShow = BLOCKS.filter((b) => b.id !== 'intro');
 
-  const rank = progress.finalBattle?.rank || 'Новичок';
+  const blocksDone = progress.completed.filter((id) => id !== 'intro').length;
+
+  const getRankByProgress = () => {
+    if (progress.finalBattle?.rank) {
+      return progress.finalBattle.rank;
+    }
+    if (blocksDone >= 9) return 'Легенда КиберПатруля';
+    if (blocksDone >= 6) return 'Киберзащитник';
+    if (blocksDone >= 3) return 'Патрульный';
+    return 'Новичок';
+  };
+
+  const rank = getRankByProgress();
 
   return (
     <div className="profile-screen">
@@ -35,11 +47,10 @@ export default function Profile({ onBack, onLevels }) {
           <p className="profile-subtitle">
             {progress.completed.length === 0
               ? 'Ты ещё не начал миссии. Пора это исправить!'
-              : `Ты прошёл ${progress.completed.filter(id => id !== 'intro').length} из ${blocksToShow.length} миссий`}
+              : `Ты прошёл ${blocksDone} из ${blocksToShow.length} миссий`}
           </p>
         </div>
 
-        {/* Большая карточка прогресса */}
         <div className="profile-card profile-progress-card">
           <div className="profile-progress-top">
             <div>
@@ -61,7 +72,6 @@ export default function Profile({ onBack, onLevels }) {
           </div>
         </div>
 
-        {/* Средний результат */}
         {average > 0 && (
           <div className="profile-card">
             <div className="profile-card-title">📊 Средний результат</div>
@@ -72,7 +82,6 @@ export default function Profile({ onBack, onLevels }) {
           </div>
         )}
 
-        {/* Достижения */}
         <div className="profile-card">
           <div className="profile-card-title">🏅 Достижения</div>
           {achievements.length === 0 ? (
@@ -98,7 +107,6 @@ export default function Profile({ onBack, onLevels }) {
           )}
         </div>
 
-        {/* Результаты по блокам */}
         <div className="profile-card">
           <div className="profile-card-title">📚 Результаты по миссиям</div>
           <div className="profile-blocks-list">
@@ -138,7 +146,6 @@ export default function Profile({ onBack, onLevels }) {
           </div>
         </div>
 
-        {/* Финальная битва */}
         {progress.finalBattle && (
           <div className="profile-card profile-final-card">
             <div className="profile-card-title">⚔️ Финальная битва</div>
@@ -151,7 +158,6 @@ export default function Profile({ onBack, onLevels }) {
           </div>
         )}
 
-        {/* Кнопки */}
         <div className="profile-actions">
           <button className="btn-primary" onClick={onLevels}>
             🎮 К миссиям

@@ -38,7 +38,7 @@ export default function PasswordGame({ onComplete }) {
 
   const { score, checks } = evaluatePassword(password);
   const strength = getStrength(score);
-  const progress = (score / 6) * 100;
+  const progress = (score / 5) * 100;
 
   const addChar = (char) => setPassword((p) => p + char);
   const removeLast = () => setPassword((p) => p.slice(0, -1));
