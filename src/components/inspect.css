@@ -9,8 +9,8 @@
 }
 
 .inspect-header h2 {
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 60px;
 }
 .inspect-header p {
   font-size: 17px;
@@ -163,4 +163,5 @@
   .inspect-feedback-title { font-size: 18px; }
   .inspect-feedback-label { font-size: 14px; }
   .inspect-feedback-reason { font-size: 14px; }
+  
 }
