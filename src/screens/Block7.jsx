@@ -5,42 +5,30 @@ import DetectiveGame from '../components/DetectiveGame';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Мы поговорили про вирусы и мошенников. Но есть ещё одна тема, о которой не всегда легко говорить — травля в интернете.',
+    text: 'Хакер создал фейковый аккаунт и начал травить ученика в чате. Ты — кибер-детектив. Изучи переписку и найди все сообщения травли.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Кибербуллинг? Я слышал это слово.',
+    text: 'Я вычислю этого труса!',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Да. Это когда кого-то оскорбляют, запугивают или унижают в сети. Сейчас ты станешь кибер-детективом. Изучи чат класса и найди все сообщения, которые являются травлей.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Ты увидел, как выглядит травля в переписке. Запомни: важно не оставаться в стороне. Если ты видишь, что кого-то травят, — сообщи взрослым.',
+    text: 'Отлично сработано! Если ты видишь травлю — нельзя молчать. Нужно сохранить скриншоты и сообщить взрослым.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Свидетель тоже может помочь — как Оля в чате.',
+    text: 'Понял. Настоящий патруль не остаётся в стороне.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Именно. А теперь — поговорим об играх. Ты же любишь играть? Там тоже есть опасности.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
@@ -65,7 +53,7 @@ export default function Block7({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -80,7 +68,7 @@ export default function Block7({ onComplete, onBack }) {
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }

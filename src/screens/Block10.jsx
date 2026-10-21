@@ -5,42 +5,30 @@ import DeleteExtra from '../components/DeleteExtra';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Ты научился защищать телефон. Но есть ещё одна важная тема — цифровая репутация. То, что ты публикуешь в интернете, остаётся навсегда.',
+    text: 'Хакер получил доступ к твоему профилю. Найди и удали опасные посты, которые раскрывают твои личные данные или порочат репутацию.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А разве кто-то смотрит мои старые посты?',
+    text: 'Сейчас наведу порядок в профиле!',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Смотрят. Учителя, приёмная комиссия, будущие работодатели. Сейчас ты увидишь свои посты. Удали те, которые могут навредить.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Запомни: интернет помнит всё. Перед публикацией спроси себя: «А не пожалею ли я об этом через 5 лет?»',
+    text: 'Молодец! Твоя репутация в безопасности. Всегда помни: интернет помнит всё, поэтому думай перед публикацией.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Лучше лишний раз подумать, чем потом удалять.',
+    text: 'Понял. Меньше лишнего в сети — спокойнее жизнь.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Именно. Остался последний блок — финальная атака. Там ты применишь всё, чему научился. Готов?',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
@@ -65,7 +53,7 @@ export default function Block10({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -80,7 +68,7 @@ export default function Block10({ onComplete, onBack }) {
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }

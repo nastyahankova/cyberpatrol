@@ -5,42 +5,30 @@ import DragOrder from '../components/DragOrder';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Телефон — это твой маленький компьютер. Там твои фото, переписки, банк, аккаунты. И его тоже надо защищать.',
+    text: 'Хакер украл твой телефон! Действовать нужно быстро. Расставь шаги по порядку, чтобы спасти свои данные.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А я думал, телефон сам защищён...',
+    text: 'Не паникую, а действую по плану!',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Нет. А ещё телефон можно потерять. Сейчас я покажу тебе ситуацию. Расставь действия в правильном порядке — что делать, если телефон пропал.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Отлично! Теперь ты знаешь порядок действий. Первое — позвонить, потом проверить геолокацию, заблокировать, сообщить взрослым и, если нужно, обратиться в полицию.',
+    text: 'Отлично! Первым делом нужно удалённо заблокировать телефон, а затем менять пароли от всех аккаунтов.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял! Теперь я знаю, что делать, если потеряю телефон.',
+    text: 'Запомнил. Теперь я готов к любым ситуациям.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Молодец. Осталось два блока. Следующий — про цифровую репутацию. Это важно для будущего.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
@@ -65,7 +53,7 @@ export default function Block9({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -80,7 +68,7 @@ export default function Block9({ onComplete, onBack }) {
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }

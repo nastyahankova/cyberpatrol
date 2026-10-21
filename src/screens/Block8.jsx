@@ -5,42 +5,30 @@ import GamingChat from '../components/GamingChat';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Ты любишь играть? В играх тоже полно мошенников. Они обещают скины, валюту, помощь — и обманывают.',
+    text: 'В играх тоже орудуют мошенники. Они обещают скины или игровую валюту за твои данные. Найди их сообщения в чате.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А я думал, что в играх можно расслабиться...',
+    text: 'Пойду чистить чат от мошенников!',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Можно. Но важно знать типичные схемы. Сейчас увидишь чат одной игры. Найди сообщения от мошенников.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Запомни: настоящие подарки не требуют пароля, а «слишком дешёвая» валюта — обман. Покупай только в официальных магазинах.',
+    text: 'Правильно! Настоящие подарки не требуют пароля. Игровую валюту покупай только в официальном магазине игры.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Лучше переплатить в официальном магазине, чем потерять аккаунт.',
+    text: 'Понял. Лучше переплатить в магазине, чем потерять аккаунт.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Именно. А теперь — следующий блок. Он про твой телефон. Ведь он с тобой всегда рядом.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
@@ -65,7 +53,7 @@ export default function Block8({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -80,7 +68,7 @@ export default function Block8({ onComplete, onBack }) {
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }

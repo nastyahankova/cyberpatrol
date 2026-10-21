@@ -5,42 +5,30 @@ import FileSort from '../components/FileSort';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Приватность — это важно. Но есть ещё одна угроза — вредоносные программы. Вирусы, трояны, шпионы.',
+    text: 'Хакер подкинул в сеть вирусы под видом полезных программ. Твоя задача — определить, какие файлы безопасны, а какие заразят компьютер.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А как они попадают на компьютер?',
+    text: 'Сейчас вычислю вирусы!',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Чаще всего — когда ты сам что-то скачиваешь. Бесплатная игра, взломанная программа, файл от незнакомца. Сейчас увидишь 6 файлов. Раздели их на безопасные и опасные.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Отлично! Главное правило: скачивай только из официальных источников. Если что-то «слишком бесплатное» — это ловушка.',
+    text: 'Молодец! Скачивай файлы только из проверенных источников, а взломанные программы и файлы от незнакомцев — это всегда риск.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Лучше заплатить, чем потом чистить компьютер.',
+    text: 'Запомнил. Лучше куплю лицензию, чем потеряю данные.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Именно! А теперь — поговорим о том, что делать, если ты столкнулся с травлей в интернете.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
@@ -65,7 +53,7 @@ export default function Block6({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -80,7 +68,7 @@ export default function Block6({ onComplete, onBack }) {
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }

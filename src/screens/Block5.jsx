@@ -5,55 +5,43 @@ import ProfileSetup from '../components/ProfileSetup';
 const introScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Ты научился защищать деньги. Теперь поговорим о другом: что мы сами рассказываем о себе в интернете.',
+    text: 'Даже безобидное фото или открытый профиль могут раскрыть твой адрес и планы. Давай настроим приватность так, чтобы мошенники остались ни с чем.',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'А что я могу рассказать? Я же ничего такого не публикую.',
+    text: 'Настроим! Где тут самое важное?',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Даже «безобидное» фото может раскрыть твой адрес, школу, привычки. Сейчас настроим твой профиль. Подумай, что безопаснее.',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 const outroScript = [
   {
     speaker: 'Анастасия Александровна',
-    text: 'Молодец! Теперь ты знаешь, какие настройки приватности безопаснее. Главное правило: перед публикацией подумай — «А что по этому фото можно обо мне узнать?»',
+    text: 'Отлично! Запомни главное правило: перед публикацией подумай — «А что этот пост расскажет обо мне незнакомцу?»',
     avatar: '/mentor.png',
     side: 'right',
   },
   {
     speaker: 'Ты',
-    text: 'Понял. Лучше скрыть лишнее, чем потом жалеть.',
+    text: 'Понял. Лучше перестраховаться, чем потом жалеть.',
     avatar: '/hero.png',
     side: 'left',
-  },
-  {
-    speaker: 'Анастасия Александровна',
-    text: 'Верно. Следующий блок — про вирусы и вредоносные программы. Готов?',
-    avatar: '/mentor.png',
-    side: 'right',
   },
 ];
 
 export default function Block5({ onComplete, onBack }) {
   const [phase, setPhase] = useState('intro');
   const [index, setIndex] = useState(0);
-  const [setupResult, setSetupResult] = useState(null);
+  const [gameResult, setGameResult] = useState(null);
 
   if (phase === 'intro') {
     const current = introScript[index];
     const handleNext = () => {
       if (index < introScript.length - 1) setIndex(index + 1);
-      else { setIndex(0); setPhase('setup'); }
+      else { setIndex(0); setPhase('game'); }
     };
     return (
       <>
@@ -65,22 +53,22 @@ export default function Block5({ onComplete, onBack }) {
           onNext={handleNext}
           isLast={index === introScript.length - 1}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
 
-  if (phase === 'setup') {
+  if (phase === 'game') {
     return (
       <>
         <ProfileSetup
           onComplete={(result) => {
-            setSetupResult(result);
+            setGameResult(result);
             setIndex(0);
             setPhase('outro');
           }}
         />
-        <button className="back-btn" onClick={onBack}>← К карте</button>
+        <button className="back-btn" onClick={onBack}>← В меню</button>
       </>
     );
   }
@@ -89,7 +77,7 @@ export default function Block5({ onComplete, onBack }) {
     const current = outroScript[index];
     const handleNext = () => {
       if (index < outroScript.length - 1) setIndex(index + 1);
-      else onComplete(setupResult);
+      else onComplete(gameResult);
     };
     return (
       <DialogueBox
