@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { phishingInspect } from '../data/phishingInspect';
 import './inspect.css';
@@ -6,6 +6,9 @@ import './inspect.css';
 export default function InspectEmail({ onComplete }) {
   const [selected, setSelected] = useState([]);
   const [finished, setFinished] = useState(false);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const totalSuspicious = phishingInspect.parts.filter((p) => p.isSuspicious).length;
 
@@ -18,8 +21,17 @@ export default function InspectEmail({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const correctCount = phishingInspect.parts.filter(
     (p) => p.isSuspicious && selected.includes(p.id)
@@ -88,6 +100,7 @@ export default function InspectEmail({ onComplete }) {
       ) : (
         <motion.div
           className="inspect-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

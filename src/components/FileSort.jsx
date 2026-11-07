@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { files } from '../data/malwareData';
 import './filesort.css';
@@ -7,6 +7,9 @@ export default function FileSort({ onComplete }) {
   const [placed, setPlaced] = useState({});
   const [finished, setFinished] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  
+  // 1. Создаем ссылку на блок с результатами
+  const feedbackRef = useRef(null);
 
   const unplaced = files.filter((f) => !placed[f.id]);
 
@@ -32,8 +35,18 @@ export default function FileSort({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo, он прокручивал наверх и мешал
   };
+
+  // 2. Добавляем эффект: как только finished становится true, скроллим к результатам
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      // Небольшая задержка, чтобы React успел отрисовать блок
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const isCorrect = (file) => {
     return (
@@ -155,6 +168,7 @@ export default function FileSort({ onComplete }) {
       ) : (
         <motion.div
           className="fs-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку к блоку с результатами
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

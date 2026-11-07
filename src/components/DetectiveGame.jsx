@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { detectiveCase } from '../data/cyberbullyingData';
 import './detective.css';
@@ -6,6 +6,9 @@ import './detective.css';
 export default function DetectiveGame({ onComplete }) {
   const [selected, setSelected] = useState([]);
   const [finished, setFinished] = useState(false);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const totalBullying = detectiveCase.messages.filter((m) => m.isBullying).length;
 
@@ -18,8 +21,17 @@ export default function DetectiveGame({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const correctCount = detectiveCase.messages.filter(
     (m) => m.isBullying && selected.includes(m.id)
@@ -93,6 +105,7 @@ export default function DetectiveGame({ onComplete }) {
       ) : (
         <motion.div
           className="dt-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

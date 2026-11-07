@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gamingChat } from '../data/gamingThreatsData';
 import './gamingchat.css';
@@ -6,6 +6,9 @@ import './gamingchat.css';
 export default function GamingChat({ onComplete }) {
   const [selected, setSelected] = useState([]);
   const [finished, setFinished] = useState(false);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const totalScammers = gamingChat.messages.filter((m) => m.isScammer).length;
 
@@ -18,8 +21,17 @@ export default function GamingChat({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const correctCount = gamingChat.messages.filter(
     (m) => m.isScammer && selected.includes(m.id)
@@ -92,6 +104,7 @@ export default function GamingChat({ onComplete }) {
       ) : (
         <motion.div
           className="gc-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { profileSettingsNew } from '../data/privacyData';
 import './profilesetup.css';
@@ -12,6 +12,9 @@ export default function ProfileSetup({ onComplete }) {
     return init;
   });
   const [finished, setFinished] = useState(false);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const handleChange = (id, value) => {
     if (finished) return;
@@ -20,8 +23,17 @@ export default function ProfileSetup({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const isCorrect = (setting) => {
     return setting.correctValues.includes(values[setting.id]);
@@ -100,6 +112,7 @@ export default function ProfileSetup({ onComplete }) {
       ) : (
         <motion.div
           className="ps-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

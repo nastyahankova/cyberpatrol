@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   DndContext,
@@ -54,6 +54,9 @@ export default function DragOrder({ onComplete }) {
   });
   const [finished, setFinished] = useState(false);
 
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } })
@@ -72,8 +75,17 @@ export default function DragOrder({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const isCorrectPosition = (id, position) => {
     const step = phoneLostSteps.find((s) => s.id === id);
@@ -118,6 +130,7 @@ export default function DragOrder({ onComplete }) {
       ) : (
         <motion.div
           className="drag-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { financialOffers } from '../data/financialSchemes';
 import './sorting.css';
@@ -7,6 +7,9 @@ export default function SortingGame({ onComplete }) {
   const [placed, setPlaced] = useState({});
   const [finished, setFinished] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const unplaced = financialOffers.filter((o) => !placed[o.id]);
 
@@ -32,8 +35,17 @@ export default function SortingGame({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const isCorrect = (offer) => {
     return (
@@ -154,6 +166,7 @@ export default function SortingGame({ onComplete }) {
       ) : (
         <motion.div
           className="sort-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >

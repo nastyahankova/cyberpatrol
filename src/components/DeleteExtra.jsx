@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { reputationPosts } from '../data/reputationData';
 import './deleteextra.css';
@@ -6,6 +6,9 @@ import './deleteextra.css';
 export default function DeleteExtra({ onComplete }) {
   const [selected, setSelected] = useState([]);
   const [finished, setFinished] = useState(false);
+  
+  // 1. Создаем ссылку для скролла
+  const feedbackRef = useRef(null);
 
   const totalDangerous = reputationPosts.filter((p) => p.isDangerous).length;
 
@@ -18,8 +21,17 @@ export default function DeleteExtra({ onComplete }) {
 
   const handleCheck = () => {
     setFinished(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Убрали старый window.scrollTo({ top: 0 }), он мешал
   };
+
+  // 2. Добавляем эффект плавной прокрутки
+  useEffect(() => {
+    if (finished && feedbackRef.current) {
+      setTimeout(() => {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [finished]);
 
   const correctCount = reputationPosts.filter(
     (p) => p.isDangerous && selected.includes(p.id)
@@ -92,6 +104,7 @@ export default function DeleteExtra({ onComplete }) {
       ) : (
         <motion.div
           className="de-feedback"
+          ref={feedbackRef} // 3. Привязываем ссылку к блоку с результатами
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
